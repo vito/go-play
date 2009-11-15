@@ -106,3 +106,4 @@ func H5(content ...) *Element	{ return New("h5", content) }
 func H6(content ...) *Element	{ return New("h6", content) }
 
 func Br() *Element	{ return New("br") }
+

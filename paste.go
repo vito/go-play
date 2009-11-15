@@ -10,6 +10,7 @@ import (
     "rand";
 	"strings";
 	"template";
+    "time";
     "./pretty";
 	. "./html";
 )
@@ -127,6 +128,8 @@ func savePaste(source string) string {
 }
 
 func randomString(length int) string {
+    rand.Seed(time.Nanoseconds());
+
     var rng, offset int;
 
     str := make([]int, length);
@@ -144,3 +147,4 @@ func randomString(length int) string {
 
     return string(str);
 }
+
