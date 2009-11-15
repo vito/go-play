@@ -26,7 +26,7 @@ var fmap = template.FormatterMap{
 var homeStr = Html(
 	Head(
         Title("Go Paste!"),
-        Link().Attrs(A {
+        Link().Attrs(As{
             "rel": "stylesheet",
             "href": "css",
             "type": "text/css",
@@ -38,20 +38,20 @@ var homeStr = Html(
         Div(
             H1("Go Paste!"),
             Form(
-                Textarea("").Attrs(A{
+                Textarea("").Attrs(As{
                     "cols": "100",
                     "rows": "15",
                     "name": "code"
                 }),
                 Br(),
-                Input().Attrs(A{
+                Input().Attrs(As{
                     "type": "submit",
                     "value": "Go Paste!"
-                })).Attrs(A{
+                })).Attrs(As{
                 "action": "/add",
                 "name": "f",
                 "method": "POST",
-            })).Attrs(A{
+            })).Attrs(As{
             "id": "home"
             }))).Out()
 var homeTempl = template.MustParse(homeStr, fmap)
@@ -59,7 +59,7 @@ var homeTempl = template.MustParse(homeStr, fmap)
 var viewStr = Html(
     Head(
         Title("Pasted!"),
-        Link().Attrs(A {
+        Link().Attrs(As{
             "rel": "stylesheet",
             "href": "css",
             "type": "text/css",
