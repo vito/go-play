@@ -28,7 +28,7 @@ func (self *TestFSM) Init(inst *fsm.Instance, msg *fsm.Message) {
     self.real = msg.Data[0].(int);
     self.imaginary = msg.Data[1].(int);
 
-    inst.Respond(fsm.M(OK, Real, Imaginary));
+    inst.Respond(fsm.M(OK, Real)); // Set initial state to Real
 }
 
 func (self *TestFSM) HandleEvent(inst *fsm.Instance, msg *fsm.Message) {

@@ -10,7 +10,6 @@ type Instance struct {
     server *Server;
     channel chan *Message;
     state func (Server, *Instance, *Message);
-    states [](func (Server, *Instance, *Message));
 }
 
 type Message struct {
@@ -31,17 +30,7 @@ func Start(srv Server, msg *Message) *Instance {
     inst.channel = make(chan *Message);
 
     go srv.Init(inst, msg);
-    data := (<-inst.channel).Data;
-
-    inst.states = make([](func (Server, *Instance, *Message)), len(data));
-    for i, state := range data {
-        inst.states[i] = state.(func (Server, *Instance, *Message));
-
-        // Just set the first one as the initial state.
-        if i == 0 {
-            inst.state = inst.states[i];
-        }
-    }
+    inst.state = (<-inst.channel).Data[0].(func (Server, *Instance, *Message));
 
     return inst;
 }
