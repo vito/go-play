@@ -1,0 +1,4 @@
+server.go: Similar to erlang's gen_server.
+server-test.go: A test for the server.go implementing a basic counting server.
+html.go: Toying with a HTML DSL.
+webserver.go: The original webserver example modified to use html.go.
