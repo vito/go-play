@@ -22,6 +22,16 @@ type Server interface {
 }
 
 
+func Start(srv Server, arg Value) (*Instance, Value) {
+    inst := new(Instance);
+    inst.server = &srv;
+    inst.channel = make(chan Value);
+
+    go srv.Init(inst, arg);
+
+    return inst, <-inst.channel;
+}
+
 func M(what int, data ...) *Message {
     msg := new(Message);
     msg.What = what;
@@ -36,15 +46,6 @@ func M(what int, data ...) *Message {
     return msg;
 }
 
-func Start(srv Server, arg Value) (*Instance, Value) {
-    inst := new(Instance);
-    inst.server = &srv;
-    inst.channel = make(chan Value);
-
-    go srv.Init(inst, arg);
-
-    return inst, <-inst.channel;
-}
 
 func (inst *Instance) Respond(val Value) {
     inst.channel <- val;
