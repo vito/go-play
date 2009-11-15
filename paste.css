@@ -1,0 +1,66 @@
+body {
+	background: #141414;
+	color: #F8F8F8;
+	padding: 0;
+	margin: 0;
+	font-family: monospace;
+}
+
+h1 {
+	font-size: 2em;
+	margin: .5em;
+}
+
+#home {
+	margin: 5em;
+}
+#home h1 {
+	margin: 0 0 1em 0;
+}
+
+a {
+	color: #ddd;
+}
+
+.go-basiclit {
+	color: #CF6A4C;
+}
+.go-basiclit.go-int {
+	color: #;
+}
+.go-basiclit.go-float {
+	color: #;
+}
+.go-basiclit.go-char {
+	color: #;
+}
+.go-basiclit.go-string {
+	color: #8F9D6A;
+}
+
+.go-comment {
+	color: #5F5A60;
+	font-style: italic;
+}
+
+.go-ident.go-exported {
+	color: #7587A6;
+}
+.go-ident.go-local {
+	color: #F8F8F8;
+}
+
+.go-token.go-keyword,
+.go-token.go-operator {
+	color: #CDA869;
+}
+
+.line-number {
+	clear: left;
+	float: left;
+	background: #111;
+	padding: 0 1em;
+	margin-right: 1em;
+	border-right: .1em solid #555;
+	text-decoration: none;
+}
