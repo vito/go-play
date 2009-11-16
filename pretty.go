@@ -102,15 +102,19 @@ func Print(filename string, source interface {}) string {
 
 	// Assume they forgot the package declaration
     if ok != nil && source != nil {
-		fileAst, _ = parser.ParseFile(filename, "package main\n\n" + source.(string), 4);
+		fileAst, ok = parser.ParseFile(filename, "package main\n\n" + source.(string), 4);
 	}
 
-	coll := new(collector);
-	(&printer.Config{
-		Mode: 5,
-		Tabwidth: 4,
-		Styler: new(HTMLStyler)
-	}).Fprint(coll, fileAst);
+	if ok == nil {
+		coll := new(collector);
+		(&printer.Config{
+			Mode: 5,
+			Tabwidth: 4,
+			Styler: new(HTMLStyler)
+		}).Fprint(coll, fileAst);
 
-	return coll.contents;
+		return coll.contents;
+	}
+
+	return "";
 }
