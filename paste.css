@@ -3,6 +3,7 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
 
 html {
 	padding: 0;
+	height: 100%;
 }
 body {
 	background: #141414;
@@ -76,6 +77,10 @@ h1 {
 #home .paste-submit:active,
 .raw:active {
 	background: #000;
+}
+
+#view {
+	height: 100%;
 }
 
 a {
