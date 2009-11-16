@@ -22,6 +22,15 @@ a {
 	color: #ddd;
 }
 
+.raw {
+	font-size: .5em;
+	font-weight: normal;
+	color: #555;
+}
+.raw a {
+	color: #888;
+}
+
 pre.line_numbers {
 	background: #111;
 	border-right: .1em solid #222;

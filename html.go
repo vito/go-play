@@ -30,12 +30,8 @@ func (self *Element) Out() string {
 
 	s += ">";
 
-	for idx, val := range self.contents.Data() {
-		if idx > 0 && self.name != "pre" {
-			s += " "
-		}
-
-		s += val;
+	for _, content := range self.contents.Data() {
+		s += content;
 	}
 
 	s += "</" + self.name + ">";

@@ -58,7 +58,7 @@ var homeTempl = template.MustParse(homeStr, fmap)
 
 var viewStr = Html(
     Head(
-        Title("Pasted!"),
+        Title("Paste #{@|html} | Go Paste!"),
         Link().Attrs(As{
             "rel": "stylesheet",
             "href": "css",
@@ -70,7 +70,20 @@ var viewStr = Html(
     Body(
         Div(
             H1(
-                "Paste: <a href=\"/view?paste={@|url+html}\">#{@|html}</a>"
+                "Paste: ",
+                A("#{@|html}").Attrs(As{
+                    "href": "/view?paste={@|url+html}"
+                }),
+                " ",
+                Span(
+                    "(",
+                    A("raw").Attrs(As{
+                        "href": "/raw?paste={@|url+html}"
+                    }),
+                    ")"
+                ).Attrs(As{
+                    "class": "raw"
+                })
             ),
             "{@|pretty}"
         ).Attrs(As{
@@ -82,6 +95,7 @@ func main() {
 	flag.Parse();
     http.Handle("/", http.HandlerFunc(home));
 	http.Handle("/add", http.HandlerFunc(add));
+	http.Handle("/raw", http.HandlerFunc(raw));
 	http.Handle("/view", http.HandlerFunc(view));
 	http.Handle("/css", http.HandlerFunc(css));
 
@@ -104,6 +118,14 @@ func add(c *http.Conn, req *http.Request)	{
         paste := savePaste(req.FormValue("code"));
         c.SetHeader("Location", "/view?paste=" + paste);
         c.WriteHeader(http.StatusFound);
+    }
+}
+
+func raw(c *http.Conn, req *http.Request) {
+    if len(req.FormValue("paste")) > 0 {
+        http.ServeFile(c, req, "pastes" + path.Clean("/" + req.FormValue("paste")));
+    } else {
+        c.Write(strings.Bytes("No paste specified.\n"));
     }
 }
 
