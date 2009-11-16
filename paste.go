@@ -15,6 +15,10 @@ import (
     . "./html";
 )
 
+// Used for building a URL response for POST requests to /
+const DOMAIN = "gopaste.org"
+
+
 var addr = flag.String("addr", ":8000", "http service address")
 
 var fmap = template.FormatterMap{
@@ -56,7 +60,7 @@ var homeStr = Html(
                         }),
                         Ul(
                             Li("Tab key inserts tabstops."),
-                            Li("Mod + S to submit.")//,
+                            Li("Mod+S to submit.")//,
                             /*Li(*/
                                 /*Input().Attrs(As{*/
                                     /*"type": "checkbox",*/
@@ -134,7 +138,13 @@ func js(c *http.Conn, req *http.Request) {
 }
 
 func home(c *http.Conn, req *http.Request)  {
-    homeTempl.Execute(nil, c)
+    if req.Method == "POST" && len(strings.TrimSpace(req.FormValue("code"))) > 0 {
+        paste := savePaste(req.FormValue("code"));
+        c.SetHeader("Content-type", "text/plain; charset=utf-8");
+		c.Write(strings.Bytes("http://" + DOMAIN + "/view?paste=" + paste));
+    } else {
+		homeTempl.Execute(nil, c)
+	}
 }
 
 func add(c *http.Conn, req *http.Request)   {
