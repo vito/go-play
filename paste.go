@@ -103,14 +103,12 @@ func add(c *http.Conn, req *http.Request)	{
     if req.Method == "POST" {
         paste := savePaste(req.FormValue("code"));
         c.SetHeader("Location", "/view?paste=" + paste);
-        c.WriteHeader(http.StatusTemporaryRedirect);
+        c.WriteHeader(http.StatusFound);
     }
 }
 
 func view(c *http.Conn, req *http.Request)	{
     // Set the method to GET so redirects from /add will parse the URL.
-    req.Method = "GET";
-
     if len(req.FormValue("paste")) > 0 {
         viewTempl.Execute(req.FormValue("paste"), c);
     } else {
