@@ -28,7 +28,6 @@ var fmap = template.FormatterMap{
 }
 
 var homeStr = "<!DOCTYPE html>" + Html(
-		fmt.Printf("%#v\n", req.URL);
     Head(
         Title("Go Paste!"),
         Link().Attrs(As{
