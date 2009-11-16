@@ -114,10 +114,12 @@ func home(c *http.Conn, req *http.Request)	{
 }
 
 func add(c *http.Conn, req *http.Request)	{
-    if req.Method == "POST" {
+    if req.Method == "POST" && len(strings.TrimSpace(req.FormValue("code"))) > 0 {
         paste := savePaste(req.FormValue("code"));
         c.SetHeader("Location", "/view?paste=" + paste);
         c.WriteHeader(http.StatusFound);
+    } else {
+        c.Write(strings.Bytes("No code submitted.\n"));
     }
 }
 
