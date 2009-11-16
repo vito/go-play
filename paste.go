@@ -176,7 +176,7 @@ func CodePrinter(w io.Writer, v interface {}, _ string) {
             }).Out()
         );
     }
-    fmt.Fprintf(
+    fmt.Fprint(
         w,
         Table(
             Tbody(
