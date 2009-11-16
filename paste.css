@@ -1,9 +1,16 @@
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}table{border-collapse:collapse;border-spacing:0;}fieldset,img{border:0;}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}li{list-style:none;}caption,th{text-align:left;}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal;}q:before,q:after{content:'';}abbr,acronym{border:0;font-variant:normal;}sup,sub{line-height:-1px;vertical-align:text-top;}sub{vertical-align:text-bottom;}input, textarea, select{font-family:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;}
+
+
+html {
+	padding: 0;
+}
 body {
 	background: #141414;
 	color: #F8F8F8;
 	padding: 0;
 	margin: 0;
 	font-family: monospace;
+	height: 100%;
 }
 
 h1 {
@@ -12,10 +19,65 @@ h1 {
 }
 
 #home {
-	margin: 5em;
 }
 #home h1 {
 	margin: 0 0 1em 0;
+}
+#home form fieldset {
+	padding: 0;
+	border: 0;
+}
+#home .paste-input {
+	border: 0;
+	background: #0a0a0a;
+	color: #fff;
+	float: left;
+	margin: 0;
+	padding: 1em;
+	width: 60em;
+	float: left;
+	position: absolute;
+	top: 5em;
+	bottom: 9em;
+	left: 5em;
+}
+#home .paste-notes {
+	position: absolute;
+	top: 5em;
+	left: 66em;
+	color: #666;
+	margin: 0;
+	padding: 0;
+}
+#home .paste-notes input.paste-private {
+	margin: -.125em .5em 0 0;
+	vertical-align: middle;
+}
+#home .paste-notes li {
+	height: 2em;
+	list-style: none;
+}
+#home .paste-submit {
+	font-family: monospace;
+	color: #fff;
+	border: 0;
+	background: #101010;
+	height: 3em;
+	font-weight: bold;
+	display: block;
+	width: 60em;
+	position: absolute;
+	bottom: 5em;
+	left: 5em;
+	cursor: pointer;
+}
+#home .paste-submit:hover,
+.raw:hover {
+	background: #222;
+}
+#home .paste-submit:active,
+.raw:active {
+	background: #000;
 }
 
 a {
@@ -23,29 +85,40 @@ a {
 }
 
 .raw {
-	font-size: .5em;
-	font-weight: normal;
-	color: #555;
-}
-.raw a {
 	color: #888;
+	float: right;
+	position: absolute;
+	top: 1em;
+	right: 1em;
+	padding: .5em .75em;
+	background: #111;
+	text-decoration: none;
 }
 
-pre.line_numbers {
+table.code {
+	width: 100%;
+}
+pre.code-lines {
+	padding: 1em 0;
+}
+pre.line-numbers {
 	background: #111;
 	border-right: .1em solid #222;
-	padding: 0 1em;
-	margin-right: 1em;
 	text-align: right;
+	padding: 1em;
 	line-height: 1.3em;
 }
-pre.line_numbers a {
+pre.line-numbers a {
 	text-decoration: none;
 	color: #444;
 }
 div.line {
+	padding: 0 1em;
 	height: 1.3em;
 	line-height: 1.3em;
+}
+div.line:target {
+	background: #222;
 }
 
 .go-basiclit {

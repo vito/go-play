@@ -1,57 +1,83 @@
 package main
 
 import (
-	"flag";
+    "flag";
     "fmt";
     "path";
-	"http";
-	"io";
-	"log";
+    "http";
+    "io";
+    "log";
     "rand";
-	"strings";
-	"template";
+    "strings";
+    "template";
     "time";
     "./pretty";
-	. "./html";
+    . "./html";
 )
 
 var addr = flag.String("addr", ":8000", "http service address")
 
 var fmap = template.FormatterMap{
-	"html": template.HTMLFormatter,
-	"url+html": UrlHtmlFormatter,
+    "html": template.HTMLFormatter,
+    "url+html": UrlHtmlFormatter,
     "pretty": CodePrinter
 }
 
 var homeStr = Html(
-	Head(
+    Head(
         Title("Go Paste!"),
         Link().Attrs(As{
             "rel": "stylesheet",
-            "href": "css",
+            "href": "/css",
             "type": "text/css",
             "media": "screen",
             "charset": "utf-8"
+        }),
+        Script("").Attrs(As{
+            "src": "/jquery",
+            "type": "text/javascript",
+            "charset": "utf-8"
+        }),
+        Script("").Attrs(As{
+            "src": "/js",
+            "type": "text/javascript",
+            "charset": "utf-8"
         })
     ),
-	Body(
+    Body(
         Div(
-            H1("Go Paste!"),
             Form(
-                Textarea("").Attrs(As{
-                    "cols": "100",
-                    "rows": "15",
-                    "name": "code"
-                }),
-                Br(),
-                Input().Attrs(As{
-                    "type": "submit",
-                    "value": "Go Paste!"
+                Fieldset(
+                    P(
+                        Textarea("").Attrs(As{
+                            "class": "paste-input",
+                            "rows": "30",
+                            "name": "code"
+                        }),
+                        Ul(
+                            Li("Tab key inserts tabstops."),
+                            Li("Mod+S to submit.")//,
+                            /*Li(*/
+                                /*Input().Attrs(As{*/
+                                    /*"type": "checkbox",*/
+                                    /*"class": "paste-private",*/
+                                    /*"name": "private"*/
+                                /*}),*/
+                                /*"Private"*/
+                            /*)*/
+                        ).Attrs(As{
+                            "class": "paste-notes"
+                        })
+                    ),
+                    Input().Attrs(As{
+                        "class": "paste-submit",
+                        "type": "submit",
+                        "value": "Go Paste!",
+						"accesskey": "s"
+                    }))).Attrs(As{
+                    "action": "/add",
+                    "method": "POST",
                 })).Attrs(As{
-                "action": "/add",
-                "name": "f",
-                "method": "POST",
-            })).Attrs(As{
             "id": "home"
             }))).Out()
 var homeTempl = template.MustParse(homeStr, fmap)
@@ -69,22 +95,10 @@ var viewStr = Html(
     ),
     Body(
         Div(
-            H1(
-                "Paste: ",
-                A("#{@|html}").Attrs(As{
-                    "href": "/view?paste={@|url+html}"
-                }),
-                " ",
-                Span(
-                    "(",
-                    A("raw").Attrs(As{
-                        "href": "/raw?paste={@|url+html}"
-                    }),
-                    ")"
-                ).Attrs(As{
-                    "class": "raw"
-                })
-            ),
+			A("raw").Attrs(As{
+				"href": "/raw?paste={@|url+html}",
+				"class": "raw"
+			}),
             "{@|pretty}"
         ).Attrs(As{
             "id": "view"
@@ -92,28 +106,38 @@ var viewStr = Html(
 var viewTempl = template.MustParse(viewStr, fmap)
 
 func main() {
-	flag.Parse();
+    flag.Parse();
     http.Handle("/", http.HandlerFunc(home));
-	http.Handle("/add", http.HandlerFunc(add));
-	http.Handle("/raw", http.HandlerFunc(raw));
-	http.Handle("/view", http.HandlerFunc(view));
-	http.Handle("/css", http.HandlerFunc(css));
+    http.Handle("/add", http.HandlerFunc(add));
+    http.Handle("/raw", http.HandlerFunc(raw));
+    http.Handle("/view", http.HandlerFunc(view));
+    http.Handle("/css", http.HandlerFunc(css));
+    http.Handle("/jquery", http.HandlerFunc(jquery));
+    http.Handle("/js", http.HandlerFunc(js));
 
-	err := http.ListenAndServe(*addr, nil);
-	if err != nil {
-		log.Exit("ListenAndServe:", err)
-	}
+    err := http.ListenAndServe(*addr, nil);
+    if err != nil {
+        log.Exit("ListenAndServe:", err)
+    }
 }
 
 func css(c *http.Conn, req *http.Request) {
     http.ServeFile(c, req, "paste.css");
 }
 
-func home(c *http.Conn, req *http.Request)	{
+func jquery(c *http.Conn, req *http.Request) {
+    http.ServeFile(c, req, "jquery.js");
+}
+
+func js(c *http.Conn, req *http.Request) {
+    http.ServeFile(c, req, "paste.js");
+}
+
+func home(c *http.Conn, req *http.Request)  {
     homeTempl.Execute(nil, c)
 }
 
-func add(c *http.Conn, req *http.Request)	{
+func add(c *http.Conn, req *http.Request)   {
     if req.Method == "POST" && len(strings.TrimSpace(req.FormValue("code"))) > 0 {
         paste := savePaste(req.FormValue("code"));
         c.SetHeader("Location", "/view?paste=" + paste);
@@ -131,8 +155,7 @@ func raw(c *http.Conn, req *http.Request) {
     }
 }
 
-func view(c *http.Conn, req *http.Request)	{
-    // Set the method to GET so redirects from /add will parse the URL.
+func view(c *http.Conn, req *http.Request)  {
     if len(req.FormValue("paste")) > 0 {
         viewTempl.Execute(req.FormValue("paste"), c);
     } else {
@@ -141,7 +164,7 @@ func view(c *http.Conn, req *http.Request)	{
 }
 
 func UrlHtmlFormatter(w io.Writer, v interface{}, _ string) {
-	template.HTMLEscape(w, strings.Bytes(http.URLEscape(v.(string))))
+    template.HTMLEscape(w, strings.Bytes(http.URLEscape(v.(string))))
 }
 
 func CodePrinter(w io.Writer, v interface {}, _ string) {
@@ -154,8 +177,8 @@ func CodePrinter(w io.Writer, v interface {}, _ string) {
 
     prettyCode := pretty.Print(v.(string), string(source));
 
-    linesPre := Pre().Attrs(As{"class": "line_numbers"});
-    codePre := Pre();
+    linesPre := Pre().Attrs(As{"class": "line-numbers"});
+	codePre := Pre().Attrs(As{"class": "code-lines"});
 
     for i, code := range strings.Split(prettyCode, "\n", 0) {
         line := i + 1;
@@ -163,7 +186,7 @@ func CodePrinter(w io.Writer, v interface {}, _ string) {
             fmt.Sprintf(
                 A("%d").Attrs(As{
                     "rel": "#L%d",
-                    "href": "#L%d",
+                    "href": "#LC%d",
                     "id": "LID%d"
                 }).Out() + "\n",
                 line, line, line, line
@@ -181,7 +204,7 @@ func CodePrinter(w io.Writer, v interface {}, _ string) {
         Table(
             Tbody(
                 Tr(
-                    Td(linesPre).Attrs(As{"valign": "top"}),
+                    Td(linesPre).Attrs(As{"width": "1%", "valign": "top"}),
                     Td(codePre).Attrs(As{"valign": "top"})
                 )
             )
