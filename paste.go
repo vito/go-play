@@ -68,11 +68,14 @@ var viewStr = Html(
         })
     ),
     Body(
-        H1(
-            "Paste: <a href=\"/view?paste={@|url+html}\">#{@|html}</a>"
-        ),
-        Pre("{@|pretty}")
-    )).Out()
+        Div(
+            H1(
+                "Paste: <a href=\"/view?paste={@|url+html}\">#{@|html}</a>"
+            ),
+            "{@|pretty}"
+        ).Attrs(As{
+            "id": "view"
+        }))).Out()
 var viewTempl = template.MustParse(viewStr, fmap)
 
 func main() {
@@ -81,6 +84,7 @@ func main() {
 	http.Handle("/add", http.HandlerFunc(add));
 	http.Handle("/view", http.HandlerFunc(view));
 	http.Handle("/css", http.HandlerFunc(css));
+
 	err := http.ListenAndServe(*addr, nil);
 	if err != nil {
 		log.Exit("ListenAndServe:", err)
@@ -88,17 +92,25 @@ func main() {
 }
 
 func css(c *http.Conn, req *http.Request) {
-    css, _ := io.ReadFile("paste.css");
-    c.Write(css);
+    http.ServeFile(c, req, "paste.css");
 }
-func home(c *http.Conn, req *http.Request)	{ homeTempl.Execute(nil, c) }
+
+func home(c *http.Conn, req *http.Request)	{
+    homeTempl.Execute(nil, c)
+}
+
 func add(c *http.Conn, req *http.Request)	{
     if req.Method == "POST" {
         paste := savePaste(req.FormValue("code"));
-        viewTempl.Execute(paste, c);
+        c.SetHeader("Location", "/view?paste=" + paste);
+        c.WriteHeader(http.StatusTemporaryRedirect);
     }
 }
+
 func view(c *http.Conn, req *http.Request)	{
+    // Set the method to GET so redirects from /add will parse the URL.
+    req.Method = "GET";
+
     if len(req.FormValue("paste")) > 0 {
         viewTempl.Execute(req.FormValue("paste"), c);
     } else {
@@ -118,7 +130,45 @@ func CodePrinter(w io.Writer, v interface {}, _ string) {
         return;
     }
 
-    pretty.Print(w, "", string(source));
+    prettyCode := pretty.Print(v.(string), string(source));
+
+    linesPre := Pre().Attrs(As{"class": "line_numbers"});
+    codePre := Pre();
+
+    for i, code := range strings.Split(prettyCode, "\n", 0) {
+        line := i + 1;
+        linesPre.Append(
+            fmt.Sprintf(
+                A("%d").Attrs(As{
+                    "rel": "#L%d",
+                    "href": "#L%d",
+                    "id": "LID%d"
+                }).Out() + "\n",
+                line, line, line, line
+            )
+        );
+        codePre.Append(
+            Div(code).Attrs(As{
+                "class": "line",
+                "id": "LC" + fmt.Sprint(line)
+            }).Out()
+        );
+    }
+    fmt.Fprintf(
+        w,
+        Table(
+            Tbody(
+                Tr(
+                    Td(linesPre).Attrs(As{"valign": "top"}),
+                    Td(codePre).Attrs(As{"valign": "top"})
+                )
+            )
+        ).Attrs(As{
+            "class": "code",
+            "cellspacing": "0",
+            "cellpadding": "0"
+        }).Out()
+    );
 }
 
 func savePaste(source string) string {

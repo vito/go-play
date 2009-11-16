@@ -22,8 +22,20 @@ a {
 	color: #ddd;
 }
 
-pre {
-	margin-left: 6.1em;
+pre.line_numbers {
+	background: #111;
+	border-right: .1em solid #555;
+	padding: 0 1em;
+	margin-right: 1em;
+	text-align: right;
+	line-height: 1.3em;
+}
+pre.line_numbers a {
+	text-decoration: none;
+}
+div.line {
+	height: 1.3em;
+	line-height: 1.3em;
 }
 
 .go-basiclit {

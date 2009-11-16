@@ -1,6 +1,7 @@
 package html
 
 import (
+    "container/vector";
 	"reflect";
 )
 
@@ -9,7 +10,7 @@ type As map[string]string
 
 type Element struct {
 	name		string;
-	contents	[]string;
+	contents	*vector.StringVector;
 	attributes	As;
 }
 
@@ -23,14 +24,14 @@ func (self *Element) Out() string {
 
 	s := "<" + self.name + attrs;
 
-	if self.contents == nil {
+	if self.contents.Len() == 0 {
 		return s + " />"
 	}
 
 	s += ">";
 
-	for idx, val := range self.contents {
-		if idx > 0 {
+	for idx, val := range self.contents.Data() {
+		if idx > 0 && self.name != "pre" {
 			s += " "
 		}
 
@@ -42,6 +43,21 @@ func (self *Element) Out() string {
 	return s;
 }
 
+func (self *Element) Append(content ...) *Element {
+	v := reflect.NewValue(content).(*reflect.StructValue);
+
+	for i := 0; i < v.NumField(); i++ {
+		switch v.Field(i).Interface().(type) {
+		case string:
+			self.contents.Push(v.Field(i).Interface().(string));
+		default:
+			self.contents.Push(v.Field(i).Interface().(*Element).Out());
+		}
+	}
+
+	return self;
+}
+
 func (self *Element) Attrs(attrs As) *Element {
 	self.attributes = attrs;
 	return self;
@@ -51,22 +67,12 @@ func (self *Element) Attrs(attrs As) *Element {
 func New(name string, content ...) *Element {
 	ele := new(Element);
 	ele.name = name;
+    ele.contents = vector.NewStringVector(0);
+    ele.attributes = nil;
 
-	v := reflect.NewValue(content).(*reflect.StructValue);
+    ele.Append(content);
 
-	ele.contents = make([]string, v.NumField());
-	for i := 0; i < v.NumField(); i++ {
-		switch v.Field(i).Interface().(type) {
-		case string:
-			ele.contents[i] = v.Field(i).Interface().(string)
-		default:
-			ele.contents[i] = v.Field(i).Interface().(*Element).Out()
-		}
-	}
-
-	ele.attributes = nil;
-
-	return ele;
+    return ele;
 }
 
 
