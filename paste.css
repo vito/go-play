@@ -54,7 +54,7 @@ h1 {
 	vertical-align: middle;
 }
 #home .paste-notes li {
-	height: 2em;
+	height: 1.5em;
 	list-style: none;
 }
 #home .paste-submit {
@@ -96,6 +96,7 @@ a {
 }
 
 table.code {
+	height: 100%;
 	width: 100%;
 }
 pre.code-lines {
@@ -107,6 +108,7 @@ pre.line-numbers {
 	text-align: right;
 	padding: 1em;
 	line-height: 1.3em;
+	height: 100%;
 }
 pre.line-numbers a {
 	text-decoration: none;

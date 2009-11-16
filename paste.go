@@ -56,7 +56,7 @@ var homeStr = Html(
                         }),
                         Ul(
                             Li("Tab key inserts tabstops."),
-                            Li("Mod+S to submit.")//,
+                            Li("Mod + S to submit.")//,
                             /*Li(*/
                                 /*Input().Attrs(As{*/
                                     /*"type": "checkbox",*/
