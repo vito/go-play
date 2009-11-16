@@ -141,7 +141,7 @@ func home(c *http.Conn, req *http.Request)  {
     if req.Method == "POST" && len(strings.TrimSpace(req.FormValue("code"))) > 0 {
         paste := savePaste(req.FormValue("code"));
         c.SetHeader("Content-type", "text/plain; charset=utf-8");
-		c.Write(strings.Bytes("http://" + DOMAIN + "/view?paste=" + paste));
+		c.Write(strings.Bytes("http://" + DOMAIN + "/view?paste=" + paste) + "\n");
     } else {
 		homeTempl.Execute(nil, c)
 	}
