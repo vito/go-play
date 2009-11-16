@@ -27,7 +27,8 @@ var fmap = template.FormatterMap{
     "pretty": CodePrinter
 }
 
-var homeStr = Html(
+var homeStr = "<!DOCTYPE html>" + Html(
+		fmt.Printf("%#v\n", req.URL);
     Head(
         Title("Go Paste!"),
         Link().Attrs(As{
@@ -86,7 +87,7 @@ var homeStr = Html(
             }))).Out()
 var homeTempl = template.MustParse(homeStr, fmap)
 
-var viewStr = Html(
+var viewStr = "<!DOCTYPE html>" + Html(
     Head(
         Title("Paste #{@|html} | Go Paste!"),
         Link().Attrs(As{
