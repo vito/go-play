@@ -1,4 +1,12 @@
 $(function(){
+	if ($.browser.mozilla) // Firefox can't do dynamic textarea heights. Boo!
+		$(".paste-submit").css({
+			top: $(".paste-input").offset().top +
+					 $(".paste-input").height() +
+					 ($(".paste-input").offset().top / 5) * 3, // Compensate for padding + 1em offset
+			bottom: null
+		});
+
 	$(".paste-input").keydown(function(e) {
 		if (e.keyCode != 9 || e.ctrlKey || e.altKey)
 			return;
