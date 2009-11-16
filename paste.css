@@ -24,7 +24,7 @@ a {
 
 pre.line_numbers {
 	background: #111;
-	border-right: .1em solid #555;
+	border-right: .1em solid #222;
 	padding: 0 1em;
 	margin-right: 1em;
 	text-align: right;
@@ -32,6 +32,7 @@ pre.line_numbers {
 }
 pre.line_numbers a {
 	text-decoration: none;
+	color: #444;
 }
 div.line {
 	height: 1.3em;
