@@ -25,10 +25,10 @@ func (self *TestServer) Init(inst *server.Instance, arg server.Value) {
     inst.Respond(server.M(OK, "Started."));
 }
 
-func (self *TestServer) HandleCall(inst *server.Instance, msg *server.Message) {
+func (self *TestServer) HandleCall(response chan<- server.Value, inst *server.Instance, msg *server.Message) {
     switch msg.What {
         case GET:
-            inst.Respond(self.count);
+            response <- self.count;
     }
 }
 
@@ -51,19 +51,19 @@ func main() {
 
     fmt.Printf("Started; result: %#v\n", result);
 
-    fmt.Printf("Call: %v\n", inst.Call(server.M(GET)));
+    fmt.Printf("Call: %v\n", <-inst.Call(server.M(GET)));
 
     inst.Cast(server.M(INCREASE));
-    fmt.Printf("Call: %v\n", inst.Call(server.M(GET)));
+    fmt.Printf("Call: %v\n", <-inst.Call(server.M(GET)));
 
     inst.Cast(server.M(ADD, 100));
-    fmt.Printf("Call: %v\n", inst.Call(server.M(GET)));
+    fmt.Printf("Call: %v\n", <-inst.Call(server.M(GET)));
 
     inst.Cast(server.M(DECREASE));
-    fmt.Printf("Call: %v\n", inst.Call(server.M(GET)));
+    fmt.Printf("Call: %v\n", <-inst.Call(server.M(GET)));
 
     inst.Cast(server.M(SUBTRACT, 100));
-    fmt.Printf("Call: %v\n", inst.Call(server.M(GET)));
+    fmt.Printf("Call: %v\n", <-inst.Call(server.M(GET)));
 
     fmt.Printf("All done!\n");
 }

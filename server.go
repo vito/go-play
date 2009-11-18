@@ -17,7 +17,7 @@ type Message struct {
 
 type Server interface {
     Init(*Instance, Value);
-    HandleCall(*Instance, *Message);
+    HandleCall(chan<- Value, *Instance, *Message);
     HandleCast(*Instance, *Message);
 }
 
@@ -51,9 +51,10 @@ func (inst *Instance) Respond(val Value) {
     inst.channel <- val;
 }
 
-func (inst *Instance) Call(msg *Message) Value {
-    go inst.server.HandleCall(inst, msg);
-    return <-inst.channel;
+func (inst *Instance) Call(msg *Message) <-chan Value {
+	c := make(chan Value);
+    go inst.server.HandleCall(c, inst, msg);
+    return c;
 }
 
 func (inst *Instance) Cast(msg *Message) {
