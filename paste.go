@@ -121,7 +121,7 @@ func home(c *http.Conn, req *http.Request) {
 		c.SetHeader("Content-type", "text/plain; charset=utf-8");
 		c.Write(strings.Bytes("http://" + DOMAIN + "/" + paste + "\n"));
 	case len(path) > 0:
-		viewTempl.Execute(path, c);
+		viewTempl.Execute(path, c)
 	default:
 		homeTempl.Execute(nil, c)
 	}
@@ -207,10 +207,10 @@ func savePaste(source string) string {
 
 func newName() (name string) {
 	name = randomString(5);
-	_, err := os.Open("pastes/" + name, os.O_RDONLY, 0);
+	_, err := os.Open("pastes/"+name, os.O_RDONLY, 0);
 
 	if err != nil {
-		return;
+		return
 	}
 
 	return newName();

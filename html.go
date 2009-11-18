@@ -1,7 +1,7 @@
 package html
 
 import (
-    "container/vector";
+	"container/vector";
 	"reflect";
 )
 
@@ -31,7 +31,7 @@ func (self *Element) Out() string {
 	s += ">";
 
 	for _, content := range self.contents.Data() {
-		s += content;
+		s += content
 	}
 
 	s += "</" + self.name + ">";
@@ -45,9 +45,9 @@ func (self *Element) Append(content ...) *Element {
 	for i := 0; i < v.NumField(); i++ {
 		switch v.Field(i).Interface().(type) {
 		case string:
-			self.contents.Push(v.Field(i).Interface().(string));
+			self.contents.Push(v.Field(i).Interface().(string))
 		default:
-			self.contents.Push(v.Field(i).Interface().(*Element).Out());
+			self.contents.Push(v.Field(i).Interface().(*Element).Out())
 		}
 	}
 
@@ -63,12 +63,12 @@ func (self *Element) Attrs(attrs As) *Element {
 func New(name string, content ...) *Element {
 	ele := new(Element);
 	ele.name = name;
-    ele.contents = vector.NewStringVector(0);
-    ele.attributes = nil;
+	ele.contents = vector.NewStringVector(0);
+	ele.attributes = nil;
 
-    ele.Append(content);
+	ele.Append(content);
 
-    return ele;
+	return ele;
 }
 
 
@@ -274,4 +274,3 @@ func Menu(content ...) *Element	{ return New("menu", content) }
 func Legend(content ...) *Element	{ return New("legend", content) }
 
 func Div(content ...) *Element	{ return New("div", content) }
-
