@@ -5,32 +5,35 @@ import "reflect";
 
 type Value interface {};
 
-type Instance struct {
-    server *Server;
-    channel chan Value;
-}
-
 type Message struct {
     What int;
     Data []Value;
 }
 
 type Server interface {
-    Init(*Instance, Value);
-    HandleCall(chan<- Value, *Instance, *Message);
-    HandleCast(*Instance, *Message);
+    Init(chan<- Value, Value);
+    HandleCall(chan<- Value, *Message);
+    HandleCast(*Message);
 }
 
 
-func Start(srv Server, arg Value) (*Instance, Value) {
-    inst := new(Instance);
-    inst.server = &srv;
-    inst.channel = make(chan Value);
+func Start(srv Server, arg Value) <-chan Value {
+	r := make(chan Value);
+    go srv.Init(r, arg);
 
-    go srv.Init(inst, arg);
-
-    return inst, <-inst.channel;
+    return r;
 }
+
+func Call(srv Server, msg *Message) <-chan Value {
+	c := make(chan Value);
+    go srv.HandleCall(c, msg);
+    return c;
+}
+
+func Cast(srv Server, msg *Message) {
+    go srv.HandleCast(msg);
+}
+
 
 func M(what int, data ...) *Message {
     msg := new(Message);
@@ -46,17 +49,3 @@ func M(what int, data ...) *Message {
     return msg;
 }
 
-
-func (inst *Instance) Respond(val Value) {
-    inst.channel <- val;
-}
-
-func (inst *Instance) Call(msg *Message) <-chan Value {
-	c := make(chan Value);
-    go inst.server.HandleCall(c, inst, msg);
-    return c;
-}
-
-func (inst *Instance) Cast(msg *Message) {
-    go inst.server.HandleCast(inst, msg);
-}

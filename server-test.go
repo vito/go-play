@@ -20,19 +20,19 @@ const (
 )
 
 
-func (self *TestServer) Init(inst *server.Instance, arg server.Value) {
+func (self *TestServer) Init(r chan<- server.Value, arg server.Value) {
     self.count = arg.(int);
-    inst.Respond(server.M(OK, "Started."));
+    r <- server.M(OK, "Started.");
 }
 
-func (self *TestServer) HandleCall(response chan<- server.Value, inst *server.Instance, msg *server.Message) {
+func (self *TestServer) HandleCall(r chan<- server.Value, msg *server.Message) {
     switch msg.What {
         case GET:
-            response <- self.count;
+            r <- self.count;
     }
 }
 
-func (self *TestServer) HandleCast(inst *server.Instance, msg *server.Message) {
+func (self *TestServer) HandleCast(msg *server.Message) {
     switch msg.What {
         case INCREASE:
             self.count++;
@@ -47,23 +47,24 @@ func (self *TestServer) HandleCast(inst *server.Instance, msg *server.Message) {
 
 
 func main() {
-    inst, result := server.Start(new(TestServer), 0);
+	test := new(TestServer);
+    result := server.Start(test, 0);
 
-    fmt.Printf("Started; result: %#v\n", result);
+    fmt.Printf("Started; result: %#v\n", <-result);
 
-    fmt.Printf("Call: %v\n", <-inst.Call(server.M(GET)));
+    fmt.Printf("Call: %v\n", <-server.Call(test, server.M(GET)));
 
-    inst.Cast(server.M(INCREASE));
-    fmt.Printf("Call: %v\n", <-inst.Call(server.M(GET)));
+    server.Cast(test, server.M(INCREASE));
+    fmt.Printf("Call: %v\n", <-server.Call(test, server.M(GET)));
 
-    inst.Cast(server.M(ADD, 100));
-    fmt.Printf("Call: %v\n", <-inst.Call(server.M(GET)));
+    server.Cast(test, server.M(ADD, 100));
+    fmt.Printf("Call: %v\n", <-server.Call(test, server.M(GET)));
 
-    inst.Cast(server.M(DECREASE));
-    fmt.Printf("Call: %v\n", <-inst.Call(server.M(GET)));
+    server.Cast(test, server.M(DECREASE));
+    fmt.Printf("Call: %v\n", <-server.Call(test, server.M(GET)));
 
-    inst.Cast(server.M(SUBTRACT, 100));
-    fmt.Printf("Call: %v\n", <-inst.Call(server.M(GET)));
+    server.Cast(test, server.M(SUBTRACT, 100));
+    fmt.Printf("Call: %v\n", <-server.Call(test, server.M(GET)));
 
     fmt.Printf("All done!\n");
 }
