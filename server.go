@@ -1,13 +1,13 @@
 package server
 
-import "reflect";
+import "reflect"
 
 
-type Value interface {};
+type Value interface{}
 
 type Message struct {
-    What int;
-    Data []Value;
+	What	int;
+	Data	[]Value;
 }
 
 type Server interface {
@@ -36,16 +36,16 @@ func Cast(srv Server, msg *Message) {
 
 
 func M(what int, data ...) *Message {
-    msg := new(Message);
-    msg.What = what;
+	msg := new(Message);
+	msg.What = what;
 
-    v := reflect.NewValue(data).(*reflect.StructValue);
+	v := reflect.NewValue(data).(*reflect.StructValue);
 
-    msg.Data = make([]Value, v.NumField());
-    for i := 0; i < v.NumField(); i++ {
-        msg.Data[i] = v.Field(i).Interface();
-    }
+	msg.Data = make([]Value, v.NumField());
+	for i := 0; i < v.NumField(); i++ {
+		msg.Data[i] = v.Field(i).Interface()
+	}
 
-    return msg;
+	return msg;
 }
 

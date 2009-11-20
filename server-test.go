@@ -1,22 +1,22 @@
 package main
 
 import (
-    "fmt";
-    "./server";
+	"fmt";
+	"./server";
 )
 
 
 type TestServer struct {
-    count int;
+	count int;
 }
 
 const (
-    OK = iota;
-    GET;
-    INCREASE;
-    DECREASE;
-    ADD;
-    SUBTRACT;
+	OK	= iota;
+	GET;
+	INCREASE;
+	DECREASE;
+	ADD;
+	SUBTRACT;
 )
 
 
@@ -66,5 +66,6 @@ func main() {
     server.Cast(test, server.M(SUBTRACT, 100));
     fmt.Printf("Call: %v\n", <-server.Call(test, server.M(GET)));
 
-    fmt.Printf("All done!\n");
+	fmt.Printf("All done!\n");
 }
+
