@@ -11,28 +11,26 @@ type Message struct {
 }
 
 type Server interface {
-    Init(chan<- Value, Value);
-    HandleCall(chan<- Value, *Message);
-    HandleCast(*Message);
+	Init(chan<- Value, Value);
+	HandleCall(chan<- Value, *Message);
+	HandleCast(*Message);
 }
 
 
 func Start(srv Server, arg Value) <-chan Value {
 	r := make(chan Value);
-    go srv.Init(r, arg);
+	go srv.Init(r, arg);
 
-    return r;
+	return r;
 }
 
 func Call(srv Server, msg *Message) <-chan Value {
 	c := make(chan Value);
-    go srv.HandleCall(c, msg);
-    return c;
+	go srv.HandleCall(c, msg);
+	return c;
 }
 
-func Cast(srv Server, msg *Message) {
-    go srv.HandleCast(msg);
-}
+func Cast(srv Server, msg *Message)	{ go srv.HandleCast(msg) }
 
 
 func M(what int, data ...) *Message {
@@ -48,4 +46,3 @@ func M(what int, data ...) *Message {
 
 	return msg;
 }
-

@@ -6,6 +6,7 @@ import (
 	"go/parser";
 	"go/printer";
 	"os";
+	"regexp";
 	"strings";
 )
 
@@ -97,14 +98,27 @@ func (self *HTMLStyler) Token(tok token.Token) ([]byte, printer.HTMLTag) {
 	};
 }
 
-func Print(filename string, source interface{}) string {
-	fileAst, ok := parser.ParseFile(filename, source, 4);
+func Print(filename string, source interface{}) (pretty string, ok os.Error) {
+	var fileAst *ast.File;
+
+	fileAst, ok = parser.ParseFile(filename, source, 4);
 
 	// Assume they forgot the package declaration
 	if ok != nil && source != nil {
-		fileAst, ok = parser.ParseFile(filename, "package main\n\n"+source.(string), 4)
+		src := source.(string);
+
+		if m, _ := regexp.MatchString(`func\s+main`, src); !m {
+			src = "func main() { " + src + " }";
+		}
+
+		if m, _ := regexp.MatchString(`^\s*package`, src); !m {
+			src = "package main\n\n" + src;
+		}
+
+		fileAst, ok = parser.ParseFile(filename, src, 4)
 	}
 
+	pretty = "";
 	if ok == nil {
 		coll := new(collector);
 		(&printer.Config{
@@ -113,8 +127,8 @@ func Print(filename string, source interface{}) string {
 			Styler: new(HTMLStyler),
 		}).Fprint(coll, fileAst);
 
-		return coll.contents;
+		pretty = coll.contents;
 	}
 
-	return "";
+	return;
 }

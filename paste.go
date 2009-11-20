@@ -20,12 +20,11 @@ import (
 const DOMAIN = "gopaste.org"
 
 
-var addr = flag.String("addr", ":8000", "http service address")
-
+// Templates
 var fmap = template.FormatterMap{
 	"html": template.HTMLFormatter,
-	"url+html": UrlHtmlFormatter,
-	"pretty": CodePrinter,
+	"url+html": urlHtmlFormatter,
+	"code": codePrinter,
 }
 
 var homeStr = "<!DOCTYPE html>" + Html(
@@ -101,17 +100,13 @@ var viewStr = "<!DOCTYPE html>" + Html(
 				"href": "/raw?paste={@|url+html}",
 				"class": "raw",
 			}),
-			"{@|pretty}").Attrs(As{
+			"{@|code}").Attrs(As{
 			"id": "view",
 		}))).Out()
 var viewTempl = template.MustParse(viewStr, fmap)
 
-func css(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.css") }
 
-func jquery(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "jquery.js") }
-
-func js(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.js") }
-
+// Actions
 func home(c *http.Conn, req *http.Request) {
 	_, path := path.Split(req.URL.Path);
 
@@ -153,11 +148,19 @@ func view(c *http.Conn, req *http.Request) {
 	}
 }
 
-func UrlHtmlFormatter(w io.Writer, v interface{}, _ string) {
+func css(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.css") }
+
+func jquery(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "jquery.js") }
+
+func js(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.js") }
+
+
+// Template filters
+func urlHtmlFormatter(w io.Writer, v interface{}, _ string) {
 	template.HTMLEscape(w, strings.Bytes(http.URLEscape(v.(string))))
 }
 
-func CodePrinter(w io.Writer, v interface{}, _ string) {
+func codePrinter(w io.Writer, v interface{}, _ string) {
 	source, ok := io.ReadFile("pastes" + path.Clean("/"+v.(string)));
 
 	if ok != nil {
@@ -165,7 +168,10 @@ func CodePrinter(w io.Writer, v interface{}, _ string) {
 		return;
 	}
 
-	prettyCode := pretty.Print(v.(string), string(source));
+	prettyCode, ok := pretty.Print(v.(string), string(source));
+	if ok != nil { // If it fails to parse, just serve it raw.
+		prettyCode = string(source);
+	}
 
 	linesPre := Pre().Attrs(As{"class": "line-numbers"});
 	codePre := Pre().Attrs(As{"class": "code-lines"});
@@ -199,6 +205,8 @@ func CodePrinter(w io.Writer, v interface{}, _ string) {
 		}).Out());
 }
 
+
+// Paste util functions
 func savePaste(source string) string {
 	paste := newName();
 	io.WriteFile("pastes/"+paste, strings.Bytes(source), 0644);
@@ -236,6 +244,10 @@ func randomString(length int) string {
 
 	return string(str);
 }
+
+
+// Runtime
+var addr = flag.String("addr", ":8000", "http service address")
 
 func main() {
 	rand.Seed(time.Nanoseconds());
