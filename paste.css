@@ -159,7 +159,7 @@ div.line:target {
 }
 
 #all {
-    margin: 5em;
+    padding: 5em;
 }
 #all table.code {
     height: auto;
