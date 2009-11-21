@@ -195,7 +195,6 @@ func home(c *http.Conn, req *http.Request) {
 }
 
 func add(c *http.Conn, req *http.Request) {
-	fmt.Println(req.FormValue("private"));
 	if req.Method == "POST" && len(strings.TrimSpace(req.FormValue("code"))) > 0 {
 		paste := savePaste(req.FormValue("code"), req.FormValue("private") != "");
 		c.SetHeader("Location", "/"+paste);
