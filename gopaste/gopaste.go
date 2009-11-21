@@ -1,7 +1,6 @@
 package gopaste
 
 import (
-	"fmt";
 	"http";
 	"io";
 	"os";
@@ -21,14 +20,6 @@ const PATH = "pastes/"
 
 // Pastes per page at /all
 const PER_PAGE = 5
-
-
-// Sort paste files by modification date, not name
-type pasteList []*os.Dir
-
-func (d pasteList) Len() int		{ return len(d) }
-func (d pasteList) Less(i, j int) bool	{ return d[i].Mtime_ns > d[j].Mtime_ns }
-func (d pasteList) Swap(i, j int)	{ d[i], d[j] = d[j], d[i] }
 
 
 func Home(c *http.Conn, req *http.Request) {
@@ -107,6 +98,21 @@ func AllPaged(c *http.Conn, req *http.Request, page int) {
 }
 
 
+func Css(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.css") }
+
+func JQuery(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "jquery.js") }
+
+func Js(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.js") }
+
+
+// Sort paste files by modification date, not name
+type pasteList []*os.Dir
+
+func (d pasteList) Len() int		{ return len(d) }
+func (d pasteList) Less(i, j int) bool	{ return d[i].Mtime_ns > d[j].Mtime_ns }
+func (d pasteList) Swap(i, j int)	{ d[i], d[j] = d[j], d[i] }
+
+
 func savePaste(source string, private bool) string {
 	var paste string;
 
@@ -152,14 +158,3 @@ func randomString(length int) string {
 
 	return string(str);
 }
-
-
-func Test(c *http.Conn, req *http.Request, arg string, page int) {
-	fmt.Printf("Got test request: %s, %d\n", arg, page)
-}
-
-func Css(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.css") }
-
-func JQuery(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "jquery.js") }
-
-func Js(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.js") }

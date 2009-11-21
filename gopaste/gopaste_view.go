@@ -7,8 +7,9 @@ import (
 	"path";
 	"strings";
 	"template";
-	. "./html";
 	"./pretty";
+
+	. "./html";
 )
 
 
@@ -26,27 +27,33 @@ var fmap = template.FormatterMap{
 }
 
 
-var homeStr = "<!DOCTYPE html>" + Html(
-	Head(
-		Title("Go Paste!"),
-		Link().Attrs(As{
-			"rel": "stylesheet",
-			"href": "/css",
-			"type": "text/css",
-			"media": "screen",
-			"charset": "utf-8",
-		}),
-		Script("").Attrs(As{
-			"src": "/jquery",
-			"type": "text/javascript",
-			"charset": "utf-8",
-		}),
-		Script("").Attrs(As{
-			"src": "/js",
-			"type": "text/javascript",
-			"charset": "utf-8",
-		})),
-	Body(
+func page(title string, contents *Element) string {
+	return "<!DOCTYPE html>" + Html(
+		Head(
+			Title(title),
+			Link().Attrs(As{
+				"rel": "stylesheet",
+				"href": "/css",
+				"type": "text/css",
+				"media": "screen",
+				"charset": "utf-8",
+			}),
+			Script("").Attrs(As{
+				"src": "/jquery",
+				"type": "text/javascript",
+				"charset": "utf-8",
+			}),
+			Script("").Attrs(As{
+				"src": "/js",
+				"type": "text/javascript",
+				"charset": "utf-8",
+			})),
+		Body(contents)).Out()
+}
+
+var Home = template.MustParse(
+	page(
+		"Go Paste!",
 		Div(
 			Form(
 				Fieldset(
@@ -63,7 +70,7 @@ var homeStr = "<!DOCTYPE html>" + Html(
 								})),
 							Li(
 								A("Source Code").Attrs(As{
-									"href": "http://github.com/vito/go-play",
+									"href": "http://github.com/vito/go-play/tree/master/gopaste",
 								})),
 							Li(""),
 							Li("Tab key inserts tabstops."),
@@ -87,20 +94,12 @@ var homeStr = "<!DOCTYPE html>" + Html(
 				"method": "POST",
 			})).Attrs(As{
 			"id": "home",
-		}))).Out()
-var Home = template.MustParse(homeStr, fmap)
-
-var viewStr = "<!DOCTYPE html>" + Html(
-	Head(
-		Title("Paste #{@|html} | Go Paste!"),
-		Link().Attrs(As{
-			"rel": "stylesheet",
-			"href": "/css",
-			"type": "text/css",
-			"media": "screen",
-			"charset": "utf-8",
 		})),
-	Body(
+	fmap)
+
+var View = template.MustParse(
+	page(
+		"Paste #{@|html} | Go Paste!",
 		Div(
 			A("raw").Attrs(As{
 				"href": "/raw?paste={@|url+html}",
@@ -108,26 +107,18 @@ var viewStr = "<!DOCTYPE html>" + Html(
 			}),
 			"{@|code}").Attrs(As{
 			"id": "view",
-		}))).Out()
-var View = template.MustParse(viewStr, fmap)
-
-var allStr = "<!DOCTYPE html>" + Html(
-	Head(
-		Title("All | Go Paste!"),
-		Link().Attrs(As{
-			"rel": "stylesheet",
-			"href": "/css",
-			"type": "text/css",
-			"media": "screen",
-			"charset": "utf-8",
 		})),
-	Body(
+	fmap)
+
+var All = template.MustParse(
+	page(
+		"All | Go Paste!",
 		Div(
 			"{.repeated section Pastes}",
 			H2(
 				"Paste ",
 				A("#{@}").Attrs(As{
-					"href": "/{@|url+html}",
+					"href": "/view/{@|url+html}",
 				})),
 			"{@|code-truncated}",
 			"{.end}",
@@ -149,8 +140,8 @@ var allStr = "<!DOCTYPE html>" + Html(
 				"class": "pagination",
 			})).Attrs(As{
 			"id": "all",
-		}))).Out()
-var All = template.MustParse(allStr, fmap)
+		})),
+	fmap)
 
 
 func urlHtmlFormatter(w io.Writer, v interface{}, _ string) {
@@ -159,6 +150,10 @@ func urlHtmlFormatter(w io.Writer, v interface{}, _ string) {
 
 func codePrinter(w io.Writer, v interface{}, _ string) {
 	codeLines(w, v.(string), 0)
+}
+
+func truncatedCodePrinter(w io.Writer, v interface{}, _ string) {
+	codeLines(w, v.(string), 10)
 }
 
 func codeLines(w io.Writer, paste string, limit int) {
@@ -223,8 +218,4 @@ func codeLines(w io.Writer, paste string, limit int) {
 			"cellspacing": "0",
 			"cellpadding": "0",
 		}).Out());
-}
-
-func truncatedCodePrinter(w io.Writer, v interface{}, _ string) {
-	codeLines(w, v.(string), 10)
 }

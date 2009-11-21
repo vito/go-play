@@ -21,7 +21,6 @@ var cont = controller.New(map[string]interface{}{
 	`/css`: gopaste.Css,
 	`/jquery`: gopaste.JQuery,
 	`/js`: gopaste.Js,
-	`/test/([a-z]+)/([0-9]+)`: gopaste.Test,
 })
 
 
