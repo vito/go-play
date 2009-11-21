@@ -65,6 +65,9 @@ h2 {
 	padding: 0 0 .75em;
 	list-style: none;
 }
+#home .paste-notes li a {
+    text-decoration: none;
+}
 #home .paste-submit {
 	font-family: monospace;
 	color: #fff;

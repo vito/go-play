@@ -74,6 +74,17 @@ var homeStr = "<!DOCTYPE html>" + Html(
 							"name": "code",
 						}),
 						Ul(
+							Li(
+								A("All Pastes").Attrs(As{
+									"href": "/all"
+								})
+							),
+							Li(
+								A("Source Code").Attrs(As{
+									"href": "http://github.com/vito/go-play"
+								})
+							),
+							Li(""),
 							Li("Tab key inserts tabstops."),
 							Li("Mod+S to submit."),
 							Li(
