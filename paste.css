@@ -46,7 +46,7 @@ h2 {
 	margin: 0;
 	padding: 1em;
 	width: 58em;
-    height: 40em;
+    min-height: 40em;
 	position: absolute;
 	top: 5em;
 	bottom: 9em;
