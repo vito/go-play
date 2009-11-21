@@ -17,6 +17,15 @@ body {
 h1 {
 	font-size: 2em;
 	margin: .5em;
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 1.5em;
+    padding: .25em .5em;
+    display: block;
+    font-weight: bold;
+    background: #111;
 }
 
 #home {
@@ -86,6 +95,25 @@ h1 {
 a {
 	color: #ddd;
 }
+a.go-comment {
+    text-decoration: none;
+}
+a.page {
+    background: #111;
+    padding: .5em .6em;
+    margin-right: 1em;
+    text-decoration: none;
+}
+a.page:hover {
+    background: #222;
+}
+a.page:active {
+    background: #000;
+}
+
+a.prev-page {
+    margin-right: 1em;
+}
 
 .raw {
 	color: #888;
@@ -124,6 +152,11 @@ div.line {
 }
 div.line:target {
 	background: #222;
+}
+
+#all table.code {
+    height: auto;
+    margin-bottom: 2em;
 }
 
 .go-basiclit {
