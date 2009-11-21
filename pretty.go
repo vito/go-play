@@ -107,10 +107,6 @@ func Print(filename string, source interface{}) (pretty string, ok os.Error) {
 	if ok != nil && source != nil {
 		src := source.(string);
 
-		if m, _ := regexp.MatchString(`func main`, src); !m {
-			src = "func main() { " + src + " }";
-		}
-
 		if m, _ := regexp.MatchString(`^package`, src); !m {
 			src = "package main\n\n" + src;
 		}
