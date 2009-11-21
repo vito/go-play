@@ -25,7 +25,7 @@ const DOMAIN = "gopaste.org"
 const PATH = "pastes/"
 
 // Pastes per page at /all
-const PER_PAGE = 5
+const PER_PAGE = 20
 
 // Sort paste files by modification date, not name
 type pasteList []*os.Dir
@@ -137,7 +137,6 @@ var allStr = "<!DOCTYPE html>" + Html(
 		})),
 	Body(
 		Div(
-			H1("All Public Pastes"),
 			"{.repeated section pastes}",
 			H2(
 				"Paste ",
@@ -147,19 +146,22 @@ var allStr = "<!DOCTYPE html>" + Html(
 			"{@|code-truncated}",
 			"{.end}",
 
-			"{.section prev}",
-			A("&larr; Prev").Attrs(As{
-				"class": "page prev-page",
-				"href": "{prev}",
-			}),
-			"{.end}",
+			Div(
+				"{.section prev}",
+				A("&larr; Prev").Attrs(As{
+					"class": "page prev-page",
+					"href": "{prev}",
+				}),
+				"{.end}",
 
-			"{.section next}",
-			A("Next &rarr;").Attrs(As{
-				"class": "page next-page",
-				"href": "{next}",
-			}),
-			"{.end}").Attrs(As{
+				"{.section next}",
+				A("Next &rarr;").Attrs(As{
+					"class": "page next-page",
+					"href": "{next}",
+				}),
+				"{.end}").Attrs(As{
+				"class": "pagination"
+			})).Attrs(As{
 			"id": "all",
 		}))).Out()
 var allTempl = template.MustParse(allStr, fmap)
