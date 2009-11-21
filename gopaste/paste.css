@@ -60,7 +60,7 @@ h2 {
 	margin: 0;
 	padding: 0;
 }
-#home .paste-notes input.paste-private {
+#home .paste-notes input[type="checkbox"] {
 	margin: -.125em .5em 0 0;
 	vertical-align: middle;
 }

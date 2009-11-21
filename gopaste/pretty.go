@@ -108,10 +108,10 @@ func Print(filename string, source interface{}) (pretty string, ok os.Error) {
 		src := source.(string);
 
 		if m, _ := regexp.MatchString(`^package`, src); !m {
-			src = "package main\n\n" + src;
+			src = "package main\n\n" + src
 		}
 
-		fileAst, ok = parser.ParseFile(filename, src, 4)
+		fileAst, ok = parser.ParseFile(filename, src, 4);
 	}
 
 	pretty = "";
