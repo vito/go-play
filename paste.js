@@ -1,5 +1,5 @@
 $(function(){
-	if ($.browser.mozilla) // Firefox can't do dynamic textarea heights. Boo!
+	if ($.browser.mozilla || $.browser.opera) // Firefox can't do dynamic textarea heights. Boo!
 		$(".paste-submit").css({
 			top: $(".paste-input").offset().top +
 					 $(".paste-input").height() +

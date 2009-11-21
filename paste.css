@@ -4,8 +4,10 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
 html {
 	padding: 0;
 	height: 100%;
+    font-size: 62.5%;
 }
 body {
+    font-size: 1.3em;
 	background: #141414;
 	color: #F8F8F8;
 	padding: 0;
@@ -44,6 +46,7 @@ h2 {
 	margin: 0;
 	padding: 1em;
 	width: 58em;
+    height: 40em;
 	position: absolute;
 	top: 5em;
 	bottom: 9em;
