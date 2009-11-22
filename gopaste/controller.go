@@ -40,9 +40,8 @@ func (self *Controller) Handler() (func(*http.Conn, *http.Request)) {
 
 func (self *Controller) Handle(c *http.Conn, req *http.Request) {
 	for i := 0; i < self.callbacks.Len(); i++ {
-		route := self.callbacks.At(i);
+		callback := self.callbacks.At(i).(*callback);
 
-		callback := route.(*callback);
 		match := `^` + callback.match;
 
 		regexp, ok := regexp.Compile(callback.match);
@@ -65,15 +64,15 @@ func (self *Controller) Handle(c *http.Conn, req *http.Request) {
 		args[0] = reflect.NewValue(c);
 		args[1] = reflect.NewValue(req);
 		for i := 0; i < len(values)-1; i++ {
-			switch callback.funcType.In(i + 2).String() {
-			case "int":
+			switch callback.funcType.In(i + 2).(type) {
+			case *reflect.IntType:
 				asInt, ok := strconv.Atoi(values[i+1]);
 				if ok == nil {
 					args[i+2] = reflect.NewValue(asInt)
 				} else {
 					args[i+2] = reflect.NewValue(-1)
 				}
-			case "bool":
+			case *reflect.BoolType:
 				args[i+2] = reflect.NewValue(values[i+1] == "1" || values[i+1] == "true")
 			default:
 				args[i+2] = reflect.NewValue(values[i+1])

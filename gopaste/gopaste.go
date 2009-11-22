@@ -26,7 +26,6 @@ const PER_PAGE = 15
 func New() *controller.Controller {
 	cont := controller.New();
 
-	cont.AddHandler(`/$`, Home);
 	cont.AddHandler(`/add`, Add);
 	cont.AddHandler(`/all/page/([0-9]+)`, AllPaged);
 	cont.AddHandler(`/all`, All);
@@ -36,6 +35,7 @@ func New() *controller.Controller {
 	cont.AddHandler(`/jquery`, JQuery);
 	cont.AddHandler(`/js`, Js);
 	cont.AddHandler(`/([a-zA-Z0-9:]+)$`, View);
+	cont.AddHandler(`/$`, Home);
 
 	return cont;
 }
