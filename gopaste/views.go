@@ -1,9 +1,10 @@
-package gopaste_view
+ package main
 
 import (
 	"http";
 	"fmt";
 	"io";
+	"os";
 	"path";
 	"strings";
 	"template";
@@ -13,10 +14,10 @@ import (
 )
 
 
-type AllEnv struct {
-	Prev	string;
-	Next	string;
-	Pastes	[]string;
+type allEnv struct {
+	prev	string;
+	next	string;
+	pastes	[]string;
 }
 
 var fmap = template.FormatterMap{
@@ -51,7 +52,7 @@ func page(title string, contents *Element) string {
 		Body(contents)).Out()
 }
 
-var Home = template.MustParse(
+var homePage = template.MustParse(
 	page(
 		"Go Paste!",
 		Div(
@@ -97,7 +98,7 @@ var Home = template.MustParse(
 		})),
 	fmap)
 
-var View = template.MustParse(
+var viewPage = template.MustParse(
 	page(
 		"Paste #{@|html} | Go Paste!",
 		Div(
@@ -110,31 +111,26 @@ var View = template.MustParse(
 		})),
 	fmap)
 
-var All = template.MustParse(
+var allPage = template.MustParse(
 	page(
 		"All | Go Paste!",
 		Div(
-			"{.repeated section Pastes}",
-			H2(
-				"Paste ",
-				A("#{@}").Attrs(As{
-					"href": "/view/{@|url+html}",
-				})),
-			"{@|code-truncated}",
+			"{.repeated section pastes}",
+			"{@}",
 			"{.end}",
 
 			Div(
-				"{.section Prev}",
+				"{.section prev}",
 				A("&larr; Prev").Attrs(As{
 					"class": "page prev-page",
-					"href": "{Prev}",
+					"href": "{prev}",
 				}),
 				"{.end}",
 
-				"{.section Next}",
+				"{.section next}",
 				A("Next &rarr;").Attrs(As{
 					"class": "page next-page",
-					"href": "{Next}",
+					"href": "{next}",
 				}),
 				"{.end}").Attrs(As{
 				"class": "pagination",
@@ -149,18 +145,20 @@ func urlHtmlFormatter(w io.Writer, v interface{}, _ string) {
 }
 
 func codePrinter(w io.Writer, v interface{}, _ string) {
-	codeLines(w, v.(string), 0)
+	code, _ := codeLines(v.(string), 0);
+	io.WriteString(w, code);
 }
 
 func truncatedCodePrinter(w io.Writer, v interface{}, _ string) {
-	codeLines(w, v.(string), 10)
+	code, _ := codeLines(v.(string), 10);
+	io.WriteString(w, code);
 }
 
-func codeLines(w io.Writer, paste string, limit int) {
+func codeLines(paste string, limit int) (code string, err os.Error) {
 	source, ok := io.ReadFile("pastes" + path.Clean("/"+paste));
 
 	if ok != nil {
-		fmt.Fprintf(w, "Could not read paste:\n\t%s\n", ok);
+		err = os.NewError(fmt.Sprintf("io.ReadFile: %s", ok));
 		return;
 	}
 
@@ -207,15 +205,15 @@ func codeLines(w io.Writer, paste string, limit int) {
 			}).Out());
 	}
 
-	fmt.Fprint(
-		w,
-		Table(
-			Tbody(
-				Tr(
-					Td(linesPre).Attrs(As{"width": "1%", "valign": "top"}),
-					Td(codePre).Attrs(As{"valign": "top"})))).Attrs(As{
-			"class": "code",
-			"cellspacing": "0",
-			"cellpadding": "0",
-		}).Out());
+	code = Table(
+		Tbody(
+			Tr(
+				Td(linesPre).Attrs(As{"width": "1%", "valign": "top"}),
+				Td(codePre).Attrs(As{"valign": "top"})))).Attrs(As{
+		"class": "code",
+		"cellspacing": "0",
+		"cellpadding": "0",
+	}).Out();
+
+	return;
 }

@@ -7,11 +7,10 @@ import (
 	"rand";
 	"runtime";
 	"time";
-	"./gopaste";
 )
 
 // Controller
-var cont = gopaste.New()
+var cont = gopaste()
 
 var addr = flag.String("addr", ":8000", "http service address")
 

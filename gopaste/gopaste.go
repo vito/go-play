@@ -1,6 +1,7 @@
-package gopaste
+package main
 
 import (
+	"fmt";
 	"http";
 	"io";
 	"os";
@@ -9,7 +10,7 @@ import (
 	"strconv";
 	"strings";
 	"./controller";
-	"./gopaste_view";
+	. "./html";
 )
 
 
@@ -23,42 +24,42 @@ const PATH = "pastes/"
 const PER_PAGE = 15
 
 
-func New() *controller.Controller {
+func gopaste() *controller.Controller {
 	cont := controller.New();
 
-	cont.AddHandler(`/add`, Add);
-	cont.AddHandler(`/all/page/([0-9]+)`, AllPaged);
-	cont.AddHandler(`/all`, All);
-	cont.AddHandler(`/view/([a-zA-Z0-9:]+)$`, View);
-	cont.AddHandler(`/raw/([a-zA-Z0-9:]+)$`, Raw);
-	cont.AddHandler(`/css`, Css);
-	cont.AddHandler(`/jquery`, JQuery);
-	cont.AddHandler(`/js`, Js);
-	cont.AddHandler(`/([a-zA-Z0-9:]+)$`, View);
-	cont.AddHandler(`/$`, Home);
+	cont.AddHandler(`/add`, add);
+	cont.AddHandler(`/all/page/([0-9]+)`, allPaged);
+	cont.AddHandler(`/all`, all);
+	cont.AddHandler(`/view/([a-zA-Z0-9:]+)$`, view);
+	cont.AddHandler(`/raw/([a-zA-Z0-9:]+)$`, raw);
+	cont.AddHandler(`/css`, css);
+	cont.AddHandler(`/jquery`, jQuery);
+	cont.AddHandler(`/js`, js);
+	cont.AddHandler(`/([a-zA-Z0-9:]+)$`, view);
+	cont.AddHandler(`/$`, home);
 
 	return cont;
 }
 
-func Home(c *http.Conn, req *http.Request) {
+func home(c *http.Conn, req *http.Request) {
 	if req.Method == "POST" && len(strings.TrimSpace(req.FormValue("code"))) > 0 {
 		paste := savePaste(req.FormValue("code"), req.FormValue("private") != "");
 		c.SetHeader("Content-type", "text/plain; charset=utf-8");
 		c.Write(strings.Bytes("http://" + DOMAIN + "/view/" + paste + "\n"));
 	} else {
-		gopaste_view.Home.Execute(nil, c)
+		homePage.Execute(nil, c)
 	}
 }
 
-func View(c *http.Conn, _ *http.Request, id string) {
-	gopaste_view.View.Execute(id, c)
+func view(c *http.Conn, _ *http.Request, id string) {
+	viewPage.Execute(id, c)
 }
 
-func Raw(c *http.Conn, req *http.Request, id string) {
+func raw(c *http.Conn, req *http.Request, id string) {
 	http.ServeFile(c, req, "pastes/"+id)
 }
 
-func Add(c *http.Conn, req *http.Request) {
+func add(c *http.Conn, req *http.Request) {
 	if req.Method == "POST" && len(strings.TrimSpace(req.FormValue("code"))) > 0 {
 		paste := savePaste(req.FormValue("code"), req.FormValue("private") != "");
 		c.SetHeader("Location", "/view/"+paste);
@@ -68,9 +69,14 @@ func Add(c *http.Conn, req *http.Request) {
 	}
 }
 
-func All(c *http.Conn, req *http.Request)	{ AllPaged(c, req, 1) }
+func all(c *http.Conn, req *http.Request)	{ allPaged(c, req, 1) }
 
-func AllPaged(c *http.Conn, req *http.Request, page int) {
+type result struct {
+	position int;
+	code string;
+}
+
+func allPaged(c *http.Conn, req *http.Request, page int) {
 	files, ok := io.ReadDir(PATH);
 	sort.Sort(pasteList(files));
 
@@ -112,15 +118,41 @@ func AllPaged(c *http.Conn, req *http.Request, page int) {
 		next = "/all/page/" + strconv.Itoa(page+1)
 	}
 
-	gopaste_view.All.Execute(gopaste_view.AllEnv{prev, next, pastes}, c);
+	codeList := make([]string, len(pastes));
+	results := make(chan result);
+	for i := 0; i < len(pastes); i++ {
+		go func(pos int){
+			code, ok := codeLines(pastes[pos], 10);
+			if ok != nil {
+				code = ok.String();
+			}
+
+			results <- result{pos, code};
+			return
+		}(i);
+	}
+
+	for i := 0; i < len(pastes); i++ {
+		res := <-results;
+		codeList[res.position] =
+			fmt.Sprintf(
+				H2(
+					"Paste ",
+					A("#%s").Attrs(As{
+						"href": "/view/%s",
+					})).Out(),
+				pastes[res.position], pastes[res.position]) + res.code;
+	}
+
+	allPage.Execute(allEnv{prev, next, codeList}, c);
 }
 
 
-func Css(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.css") }
+func css(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.css") }
 
-func JQuery(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "jquery.js") }
+func jQuery(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "jquery.js") }
 
-func Js(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.js") }
+func js(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.js") }
 
 
 // Sort paste files by modification date, not name
