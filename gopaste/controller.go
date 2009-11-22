@@ -6,58 +6,55 @@ import (
 	"reflect";
 	"regexp";
 	"strconv";
+	"container/vector";
 )
 
 
-type Func struct {
-	Value	*reflect.FuncValue;
-	Type	*reflect.FuncType;
+type callback struct {
+	match		string;
+	funcValue	*reflect.FuncValue;
+	funcType	*reflect.FuncType;
 }
 
 type Controller struct {
-	callbacks map[string]Func;
+	callbacks *vector.Vector;
 }
 
-func New(callbacks map[string]interface{}) *Controller {
+func New() *Controller {
 	cont := new(Controller);
-	cont.callbacks = make(map[string]Func);
-
-	for regexp, fun := range callbacks {
-		cont.SetHandler(regexp, fun)
-	}
-
+	cont.callbacks = vector.New(0);
 	return cont;
 }
 
-func (self *Controller) SetHandler(regexp string, callback interface{}) {
-	self.callbacks[regexp] = Func{
-		reflect.NewValue(callback).(*reflect.FuncValue),
-		reflect.Typeof(callback).(*reflect.FuncType),
-	}
+func (self *Controller) AddHandler(regexp string, fun interface{}) {
+	self.callbacks.Push(&callback{
+		regexp,
+		reflect.NewValue(fun).(*reflect.FuncValue),
+		reflect.Typeof(fun).(*reflect.FuncType),
+	})
 }
 
-func (self *Controller) Handler() (func (*http.Conn, *http.Request)) {
-	return func(c *http.Conn, req *http.Request) {
-		self.Handle(c, req);
-	}
+func (self *Controller) Handler() (func(*http.Conn, *http.Request)) {
+	return func(c *http.Conn, req *http.Request) { self.Handle(c, req) }
 }
 
 func (self *Controller) Handle(c *http.Conn, req *http.Request) {
-	for match, callback := range self.callbacks {
-		match = `^` + match;
+	for route := range self.callbacks.Iter() {
+		callback := route.(*callback);
+		match := `^` + callback.match;
 
-		regexp, ok := regexp.Compile(match);
+		regexp, ok := regexp.Compile(callback.match);
 		if ok != nil {
 			fmt.Printf("Match could not compile: %#v\n", match);
 			continue;
 		}
 
 		values := []string{};
-		if callback.Type.NumIn() > 0 {
+		if callback.funcType.NumIn() > 0 {
 			values = regexp.MatchStrings(req.URL.Path)
 		}
 
-		if len(values) == 0 || (len(values)-1+2) != callback.Type.NumIn() {
+		if len(values) == 0 || (len(values)-1+2) != callback.funcType.NumIn() {
 			continue
 		}
 
@@ -66,7 +63,7 @@ func (self *Controller) Handle(c *http.Conn, req *http.Request) {
 		args[0] = reflect.NewValue(c);
 		args[1] = reflect.NewValue(req);
 		for i := 0; i < len(values)-1; i++ {
-			switch callback.Type.In(i + 2).String() {
+			switch callback.funcType.In(i + 2).String() {
 			case "int":
 				asInt, ok := strconv.Atoi(values[i+1]);
 				if ok == nil {
@@ -74,12 +71,14 @@ func (self *Controller) Handle(c *http.Conn, req *http.Request) {
 				} else {
 					args[i+2] = reflect.NewValue(-1)
 				}
+			case "bool":
+				args[i+2] = reflect.NewValue(values[i+1] == "1" || values[i+1] == "true")
 			default:
 				args[i+2] = reflect.NewValue(values[i+1])
 			}
 		}
 
-		callback.Value.Call(args);
+		callback.funcValue.Call(args);
 
 		break;
 	}

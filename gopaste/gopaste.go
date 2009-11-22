@@ -8,6 +8,7 @@ import (
 	"sort";
 	"strconv";
 	"strings";
+	"./controller";
 	"./gopaste_view";
 )
 
@@ -21,6 +22,23 @@ const PATH = "pastes/"
 // Pastes per page at /all
 const PER_PAGE = 5
 
+
+func New() *controller.Controller {
+	cont := controller.New();
+
+	cont.AddHandler(`/$`, Home);
+	cont.AddHandler(`/add`, Add);
+	cont.AddHandler(`/all`, All);
+	cont.AddHandler(`/all/page/([0-9]+)`, AllPaged);
+	cont.AddHandler(`/view/([a-zA-Z0-9:]+)$`, View);
+	cont.AddHandler(`/raw/([a-zA-Z0-9:]+)$`, Raw);
+	cont.AddHandler(`/css`, Css);
+	cont.AddHandler(`/jquery`, JQuery);
+	cont.AddHandler(`/js`, Js);
+	cont.AddHandler(`/([a-zA-Z0-9:]+)$`, View);
+
+	return cont;
+}
 
 func Home(c *http.Conn, req *http.Request) {
 	if req.Method == "POST" && len(strings.TrimSpace(req.FormValue("code"))) > 0 {

@@ -6,23 +6,11 @@ import (
 	"log";
 	"rand";
 	"time";
-	"./controller";
 	"./gopaste";
 )
 
 // Controller
-var cont = controller.New(map[string]interface{}{
-	`/$`: gopaste.Home,
-	`/add`: gopaste.Add,
-	`/all`: gopaste.All,
-	`/all/page/([0-9]+)`: gopaste.AllPaged,
-	`/view/([a-zA-Z0-9:]+)$`: gopaste.View,
-	`/raw/([a-zA-Z0-9:]+)$`: gopaste.Raw,
-	`/css`: gopaste.Css,
-	`/jquery`: gopaste.JQuery,
-	`/js`: gopaste.Js,
-})
-
+var cont = gopaste.New()
 
 var addr = flag.String("addr", ":8000", "http service address")
 
