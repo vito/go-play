@@ -5,6 +5,7 @@ import (
 	"http";
 	"log";
 	"rand";
+	"runtime";
 	"time";
 	"./gopaste";
 )
@@ -15,6 +16,8 @@ var cont = gopaste.New()
 var addr = flag.String("addr", ":8000", "http service address")
 
 func main() {
+	runtime.GOMAXPROCS(4);
+
 	rand.Seed(time.Nanoseconds());
 
 	flag.Parse();

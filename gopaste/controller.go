@@ -39,7 +39,9 @@ func (self *Controller) Handler() (func(*http.Conn, *http.Request)) {
 }
 
 func (self *Controller) Handle(c *http.Conn, req *http.Request) {
-	for route := range self.callbacks.Iter() {
+	for i := 0; i < self.callbacks.Len(); i++ {
+		route := self.callbacks.At(i);
+
 		callback := route.(*callback);
 		match := `^` + callback.match;
 
@@ -49,7 +51,7 @@ func (self *Controller) Handle(c *http.Conn, req *http.Request) {
 			continue;
 		}
 
-		values := []string{};
+		values := make([]string, 0);
 		if callback.funcType.NumIn() > 0 {
 			values = regexp.MatchStrings(req.URL.Path)
 		}
@@ -80,6 +82,6 @@ func (self *Controller) Handle(c *http.Conn, req *http.Request) {
 
 		callback.funcValue.Call(args);
 
-		break;
+		return;
 	}
 }
