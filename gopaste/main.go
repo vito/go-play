@@ -26,14 +26,12 @@ var cont = controller.New(map[string]interface{}{
 
 var addr = flag.String("addr", ":8000", "http service address")
 
-func handle(c *http.Conn, req *http.Request)	{ cont.Handle(c, req) }
-
 func main() {
 	rand.Seed(time.Nanoseconds());
 
 	flag.Parse();
 
-	http.Handle("/", http.HandlerFunc(handle));
+	http.Handle("/", http.HandlerFunc(cont.Handler()));
 
 	err := http.ListenAndServe(*addr, nil);
 	if err != nil {

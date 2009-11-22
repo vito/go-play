@@ -36,6 +36,12 @@ func (self *Controller) SetHandler(regexp string, callback interface{}) {
 	}
 }
 
+func (self *Controller) Handler() (func (*http.Conn, *http.Request)) {
+	return func(c *http.Conn, req *http.Request) {
+		self.Handle(c, req);
+	}
+}
+
 func (self *Controller) Handle(c *http.Conn, req *http.Request) {
 	for match, callback := range self.callbacks {
 		match = `^` + match;
