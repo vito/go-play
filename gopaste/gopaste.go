@@ -20,7 +20,7 @@ const DOMAIN = "gopaste.org"
 const PATH = "pastes/"
 
 // Pastes per page at /all
-const PER_PAGE = 5
+const PER_PAGE = 15
 
 
 func New() *controller.Controller {
@@ -28,8 +28,8 @@ func New() *controller.Controller {
 
 	cont.AddHandler(`/$`, Home);
 	cont.AddHandler(`/add`, Add);
-	cont.AddHandler(`/all`, All);
 	cont.AddHandler(`/all/page/([0-9]+)`, AllPaged);
+	cont.AddHandler(`/all`, All);
 	cont.AddHandler(`/view/([a-zA-Z0-9:]+)$`, View);
 	cont.AddHandler(`/raw/([a-zA-Z0-9:]+)$`, Raw);
 	cont.AddHandler(`/css`, Css);
