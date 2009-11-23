@@ -2,13 +2,9 @@ package main
 
 import (
 	"http";
-	"fmt";
 	"io";
-	"os";
-	"path";
 	"strings";
 	"template";
-	"./pretty";
 
 	. "./html";
 )
@@ -74,6 +70,7 @@ var homePage = template.MustParse(
 								})),
 							Li(""),
 							Li("Tab key inserts tabstops."),
+							Li("Seperate content with ---."),
 							Li("Mod+S to submit."),
 							Li(
 								Input().Attrs(As{
@@ -147,84 +144,4 @@ func codePrinter(w io.Writer, v interface{}, _ string) {
 	code, _ := prettyPaste(v.(string), 0);
 
 	io.WriteString(w, code);
-}
-
-func prettyPaste(id string, limit int) (code string, err os.Error) {
-	source, err := io.ReadFile("pastes" + path.Clean("/"+id));
-	if err != nil {
-		return;
-	}
-
-	multi := strings.Split(string(source), "---", 0);
-
-	for i := 0; i < len(multi); i++ {
-		multi[i], err = prettySource(id, multi[i], limit);
-	}
-
-	code = strings.Join(multi, "\n\n");
-
-	if len(multi) > 1 {
-		code = Div(code).Attrs(As{
-			"class": "multi-paste"
-		}).Out();
-	}
-
-	return;
-}
-
-func prettySource(filename string, source string, limit int) (code string, err os.Error) {
-	prettyCode, ok := pretty.Print(filename, source);
-	if ok != nil {	// If it fails to parse, just serve it raw.
-		prettyCode = source
-	}
-
-	linesPre := Pre().Attrs(As{"class": "line-numbers"});
-	codePre := Pre().Attrs(As{"class": "code-lines"});
-
-	stopped := false;
-	for i, code := range strings.Split(prettyCode, "\n", 0) {
-		line := i + 1;
-		linesPre.Append(
-			fmt.Sprintf(
-				A("%d").Attrs(As{
-					"rel": "#L%d",
-					"href": "#LC%d",
-					"id": "LID%d",
-				}).Out()+"\n",
-				line, line, line, line));
-		codePre.Append(
-			Div(code).Attrs(As{
-				"class": "line",
-				"id": "LC" + fmt.Sprint(line),
-			}).Out());
-
-		if limit != 0 && i == limit {
-			stopped = true;
-			break;
-		}
-	}
-
-	if stopped {
-		linesPre.Append("\n");
-		codePre.Append(
-			Div(
-				A("\n...").Attrs(As{
-					"href": "/{@|url+html}",
-					"class": "go-comment",
-				})).Attrs(As{
-				"class": "line",
-			}).Out());
-	}
-
-	code = Table(
-		Tbody(
-			Tr(
-				Td(linesPre).Attrs(As{"width": "1%", "valign": "top"}),
-				Td(codePre).Attrs(As{"valign": "top"})))).Attrs(As{
-		"class": "code",
-		"cellspacing": "0",
-		"cellpadding": "0",
-	}).Out();
-
-	return;
 }
