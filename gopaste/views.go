@@ -99,7 +99,7 @@ var viewPage = template.MustParse(
 		"Paste #{@|html} | Go Paste!",
 		Div(
 			A("raw").Attrs(As{
-				"href": "/raw?paste={@|url+html}",
+				"href": "/raw/{@|url+html}",
 				"class": "raw",
 			}),
 			"{@|code}").Attrs(As{
