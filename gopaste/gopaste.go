@@ -122,7 +122,7 @@ func allPaged(c *http.Conn, req *http.Request, page int) {
 	results := make(chan result);
 	for i := 0; i < len(pastes); i++ {
 		go func(pos int) {
-			code, err := codeLines(pastes[pos], 10);
+			code, err := prettyPaste(pastes[pos], 10);
 			if err != nil {
 				code = err.String()
 			}

@@ -2,23 +2,23 @@ body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input
 
 
 html {
-	padding: 0;
-	height: 100%;
+    padding: 0;
+    height: 100%;
     font-size: 62.7%;
 }
 body {
     font-size: 1.5em;
-	background: #141414;
-	color: #F8F8F8;
-	padding: 0;
-	margin: 0;
-	font-family: monospace;
-	height: 100%;
+    background: #141414;
+    color: #F8F8F8;
+    padding: 0;
+    margin: 0;
+    font-family: monospace;
+    height: 100%;
 }
 
 h1 {
-	font-size: 2em;
-	margin: .5em;
+    font-size: 2em;
+    margin: .5em;
     font-weight: bold;
 }
 
@@ -33,73 +33,73 @@ h2 {
 #home {
 }
 #home h1 {
-	margin: 0 0 1em 0;
+    margin: 0 0 1em 0;
 }
 #home form fieldset {
-	padding: 0;
-	border: 0;
+    padding: 0;
+    border: 0;
 }
 #home .paste-input {
-	border: 0;
-	background: #0a0a0a;
-	color: #fff;
-	margin: 0;
-	padding: 1em;
-	width: 58em;
+    border: 0;
+    background: #0a0a0a;
+    color: #fff;
+    margin: 0;
+    padding: 1em;
+    width: 58em;
     min-height: 40em;
-	position: absolute;
-	top: 5em;
-	bottom: 9em;
-	left: 5em;
+    position: absolute;
+    top: 5em;
+    bottom: 9em;
+    left: 5em;
 }
 #home .paste-notes {
-	position: absolute;
-	top: 5em;
-	left: 66em;
-	color: #666;
-	margin: 0;
-	padding: 0;
+    position: absolute;
+    top: 5em;
+    left: 66em;
+    color: #666;
+    margin: 0;
+    padding: 0;
 }
 #home .paste-notes input[type="checkbox"] {
-	margin: -.125em .5em 0 0;
-	vertical-align: middle;
+    margin: -.125em .5em 0 0;
+    vertical-align: middle;
 }
 #home .paste-notes li {
-	padding: 0 0 .75em;
-	list-style: none;
+    padding: 0 0 .75em;
+    list-style: none;
 }
 #home .paste-notes li a {
     text-decoration: none;
 }
 #home .paste-submit {
-	font-family: monospace;
-	color: #fff;
-	border: 0;
-	background: #101010;
-	height: 3em;
-	font-weight: bold;
-	display: block;
-	width: 60em;
-	position: absolute;
-	bottom: 5em;
-	left: 5em;
-	cursor: pointer;
+    font-family: monospace;
+    color: #fff;
+    border: 0;
+    background: #101010;
+    height: 3em;
+    font-weight: bold;
+    display: block;
+    width: 60em;
+    position: absolute;
+    bottom: 5em;
+    left: 5em;
+    cursor: pointer;
 }
 #home .paste-submit:hover,
 .raw:hover {
-	background: #222;
+    background: #222;
 }
 #home .paste-submit:active,
 .raw:active {
-	background: #000;
+    background: #000;
 }
 
 #view {
-	height: 100%;
+    height: 100%;
 }
 
 a {
-	color: #ddd;
+    color: #ddd;
 }
 a.go-comment {
     text-decoration: none;
@@ -123,42 +123,46 @@ a.prev-page {
 }
 
 .raw {
-	color: #888;
-	float: right;
-	position: absolute;
-	top: 1em;
-	right: 1em;
-	padding: .5em .75em;
-	background: #111;
-	text-decoration: none;
+    color: #888;
+    float: right;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    padding: .5em .75em;
+    background: #111;
+    text-decoration: none;
 }
 
 table.code {
-	height: 100%;
-	width: 100%;
+    height: 100%;
+    width: 100%;
+}
+.multi-paste table.code {
+    height: auto;
+    margin-bottom: 2em;
 }
 pre.code-lines {
-	padding: 1em 0;
+    padding: 1em 0;
 }
 pre.line-numbers {
-	background: #111;
-	border-right: .1em solid #222;
-	text-align: right;
-	padding: 1em;
-	line-height: 1.3em;
-	height: 100%;
+    background: #111;
+    border-right: .1em solid #222;
+    text-align: right;
+    padding: 1em;
+    line-height: 1.3em;
+    height: 100%;
 }
 pre.line-numbers a {
-	text-decoration: none;
-	color: #444;
+    text-decoration: none;
+    color: #444;
 }
 div.line {
-	padding: 0 1em;
-	height: 1.3em;
-	line-height: 1.3em;
+    padding: 0 1em;
+    height: 1.3em;
+    line-height: 1.3em;
 }
 div.line:target {
-	background: #222;
+    background: #222;
 }
 
 #all {
@@ -170,46 +174,46 @@ div.line:target {
 }
 
 .go-basiclit {
-	color: #CF6A4C;
+    color: #CF6A4C;
 }
 .go-basiclit.go-int {
-	color: #;
+    color: #;
 }
 .go-basiclit.go-float {
-	color: #;
+    color: #;
 }
 .go-basiclit.go-char {
-	color: #;
+    color: #;
 }
 .go-basiclit.go-string {
-	color: #8F9D6A;
+    color: #8F9D6A;
 }
 
 .go-comment {
-	color: #5F5A60;
-	font-style: italic;
+    color: #5F5A60;
+    font-style: italic;
 }
 
 .go-ident.go-exported {
-	color: #7587A6;
+    color: #7587A6;
 }
 .go-ident.go-local {
-	color: #F8F8F8;
+    color: #F8F8F8;
 }
 
 .go-token.go-keyword,
 .go-token.go-operator {
-	color: #CDA869;
+    color: #CDA869;
 }
 
 .line-number {
-	margin-left: -6.1em;
-	clear: left;
-	float: left;
-	background: #111;
-	padding: 0 1em;
-	margin-right: 1em;
-	border-right: .1em solid #555;
-	text-decoration: none;
+    margin-left: -6.1em;
+    clear: left;
+    float: left;
+    background: #111;
+    padding: 0 1em;
+    margin-right: 1em;
+    border-right: .1em solid #555;
+    text-decoration: none;
 }
 

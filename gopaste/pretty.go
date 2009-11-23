@@ -99,9 +99,7 @@ func (self *HTMLStyler) Token(tok token.Token) ([]byte, printer.HTMLTag) {
 }
 
 func Print(filename string, source interface{}) (pretty string, ok os.Error) {
-	var fileAst *ast.File;
-
-	fileAst, ok = parser.ParseFile(filename, source, 4);
+	fileAst, ok := parser.ParseFile(filename, source, 4);
 
 	// Make common corrections for snippet pastes
 	if ok != nil && source != nil {
@@ -111,20 +109,19 @@ func Print(filename string, source interface{}) (pretty string, ok os.Error) {
 			src = "package main\n\n" + src
 		}
 
-		fileAst, ok = parser.ParseFile(filename, src, 4);
+		if fileAst, ok = parser.ParseFile(filename, src, 4); ok != nil {
+			return;
+		}
 	}
 
-	pretty = "";
-	if ok == nil {
-		coll := new(collector);
-		(&printer.Config{
-			Mode: 5,
-			Tabwidth: 4,
-			Styler: new(HTMLStyler),
-		}).Fprint(coll, fileAst);
+	coll := new(collector);
+	(&printer.Config{
+		Mode: 5,
+		Tabwidth: 4,
+		Styler: new(HTMLStyler),
+	}).Fprint(coll, fileAst);
 
-		pretty = coll.contents;
-	}
+	pretty = coll.contents;
 
 	return;
 }

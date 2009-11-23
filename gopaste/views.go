@@ -24,7 +24,6 @@ var fmap = template.FormatterMap{
 	"html": template.HTMLFormatter,
 	"url+html": urlHtmlFormatter,
 	"code": codePrinter,
-	"code-truncated": truncatedCodePrinter,
 }
 
 
@@ -145,26 +144,38 @@ func urlHtmlFormatter(w io.Writer, v interface{}, _ string) {
 }
 
 func codePrinter(w io.Writer, v interface{}, _ string) {
-	code, _ := codeLines(v.(string), 0);
+	code, _ := prettyPaste(v.(string), 0);
+
 	io.WriteString(w, code);
 }
 
-func truncatedCodePrinter(w io.Writer, v interface{}, _ string) {
-	code, _ := codeLines(v.(string), 10);
-	io.WriteString(w, code);
-}
-
-func codeLines(paste string, limit int) (code string, err os.Error) {
-	source, ok := io.ReadFile("pastes" + path.Clean("/"+paste));
-
-	if ok != nil {
-		err = os.NewError(fmt.Sprintf("io.ReadFile: %s", ok));
+func prettyPaste(id string, limit int) (code string, err os.Error) {
+	source, err := io.ReadFile("pastes" + path.Clean("/"+id));
+	if err != nil {
 		return;
 	}
 
-	prettyCode, ok := pretty.Print(paste, string(source));
+	multi := strings.Split(string(source), "---", 0);
+
+	for i := 0; i < len(multi); i++ {
+		multi[i], err = prettySource(id, multi[i], limit);
+	}
+
+	code = strings.Join(multi, "\n\n");
+
+	if len(multi) > 1 {
+		code = Div(code).Attrs(As{
+			"class": "multi-paste"
+		}).Out();
+	}
+
+	return;
+}
+
+func prettySource(filename string, source string, limit int) (code string, err os.Error) {
+	prettyCode, ok := pretty.Print(filename, source);
 	if ok != nil {	// If it fails to parse, just serve it raw.
-		prettyCode = string(source)
+		prettyCode = source
 	}
 
 	linesPre := Pre().Attrs(As{"class": "line-numbers"});
