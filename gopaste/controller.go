@@ -44,7 +44,7 @@ func (self *Controller) Handle(c *http.Conn, req *http.Request) {
 
 		match := `^` + callback.match;
 
-		regexp, ok := regexp.Compile(callback.match);
+		regexp, ok := regexp.Compile(match);
 		if ok != nil {
 			fmt.Printf("Match could not compile: %#v\n", match);
 			continue;

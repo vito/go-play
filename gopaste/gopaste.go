@@ -27,6 +27,7 @@ const PER_PAGE = 15
 func gopaste() *controller.Controller {
 	cont := controller.New();
 
+	cont.AddHandler(`/$`, home);
 	cont.AddHandler(`/add`, add);
 	cont.AddHandler(`/all/page/([0-9]+)`, allPaged);
 	cont.AddHandler(`/all`, all);
@@ -36,7 +37,6 @@ func gopaste() *controller.Controller {
 	cont.AddHandler(`/jquery`, jQuery);
 	cont.AddHandler(`/js`, js);
 	cont.AddHandler(`/([a-zA-Z0-9:]+)$`, view);
-	cont.AddHandler(`/$`, home);
 
 	return cont;
 }
@@ -72,8 +72,8 @@ func add(c *http.Conn, req *http.Request) {
 func all(c *http.Conn, req *http.Request)	{ allPaged(c, req, 1) }
 
 type result struct {
-	position int;
-	code string;
+	position	int;
+	code		string;
 }
 
 func allPaged(c *http.Conn, req *http.Request, page int) {
@@ -121,15 +121,14 @@ func allPaged(c *http.Conn, req *http.Request, page int) {
 	codeList := make([]string, len(pastes));
 	results := make(chan result);
 	for i := 0; i < len(pastes); i++ {
-		go func(pos int){
-			code, ok := codeLines(pastes[pos], 10);
-			if ok != nil {
-				code = ok.String();
+		go func(pos int) {
+			code, err := codeLines(pastes[pos], 10);
+			if err != nil {
+				code = err.String()
 			}
 
 			results <- result{pos, code};
-			return
-		}(i);
+		}(i)
 	}
 
 	for i := 0; i < len(pastes); i++ {
