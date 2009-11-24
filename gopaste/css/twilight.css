@@ -1,0 +1,42 @@
+body {
+    background: #141414;
+    color: #F8F8F8;
+}
+
+h2 { background: #111; }
+
+a { color: #ddd; }
+
+pre.line-numbers { background: #111; border-right-color: #222; }
+pre.line-numbers a { color: #444; }
+
+div.line:target { background: #222; }
+
+.raw,
+.page { background: #111; }
+
+#home .paste-input { color: #fff; background: #0a0a0a; }
+#home .paste-submit { color: #fff; background: #101010; }
+#home .paste-notes { color: #666; }
+#home .paste-submit:hover,
+.raw:hover,
+.page:hover { background: #222; }
+#home .paste-submit:active,
+.raw:active,
+.page:active { background: #000; }
+
+.go-basiclit { color: #CF6A4C; }
+.go-basiclit.go-int { color: #; }
+.go-basiclit.go-float { color: #; }
+.go-basiclit.go-char { color: #; }
+.go-basiclit.go-string { color: #8F9D6A; }
+
+.go-comment { color: #5F5A60; font-style: italic; }
+
+.go-ident.go-exported { color: #7587A6; }
+.go-ident.go-local { color: #F8F8F8; }
+.go-ident.go-func-ident { color: #9B703F; }
+
+.go-token.go-keyword,
+.go-token.go-operator { color: #CDA869; }
+

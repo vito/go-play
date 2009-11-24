@@ -1,0 +1,46 @@
+body {
+    background: #1b3748;
+    color: #F8F8F8;
+}
+
+h2 { background: #2c4859; }
+
+a { color: #1E9AE0; }
+
+
+#home .paste-input { color: #000; background: #fff; }
+#home .paste-notes { color: #666; }
+
+#home .paste-submit,
+.raw,
+.page { color: #fff; background: #2c4859; }
+
+#home .paste-submit:hover,
+.raw:hover,
+.page:hover { background: #222; }
+
+#home .paste-submit:active,
+.raw:active,
+.page:active { background: #000; }
+
+
+pre.line-numbers { background: #1b3748; border-right-color: #1b3748; }
+pre.line-numbers a { color: #999; }
+
+div.line:target { background: #ffffcc; }
+
+
+.go-basiclit { color: #fff; }
+.go-basiclit.go-int { color: #EFE900; }
+.go-basiclit.go-float { color: #FF3A83; }
+.go-basiclit.go-char { color: #; }
+.go-basiclit.go-string { color: #55E439; }
+
+.go-comment { color: #1E9AE0; font-style: italic; }
+
+.go-ident.go-exported { color: #F6F080; }
+.go-ident.go-local { color: #fff; }
+
+.go-token.go-keyword { color: #FFAA00; }
+.go-token.go-operator { color: #FFAA00; }
+

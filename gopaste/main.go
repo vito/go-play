@@ -15,7 +15,7 @@ var cont = gopaste()
 var addr = flag.String("addr", ":8000", "http service address")
 
 func main() {
-	runtime.GOMAXPROCS(4);
+	runtime.GOMAXPROCS(8);
 
 	rand.Seed(time.Nanoseconds());
 

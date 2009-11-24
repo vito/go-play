@@ -9,6 +9,7 @@ import (
 	"sort";
 	"strconv";
 	"strings";
+
 	"./controller";
 	. "./html";
 )
@@ -23,6 +24,16 @@ const PATH = "pastes/"
 // Pastes per page at /all
 const PER_PAGE = 15
 
+// Default theme for pastes (and the site)
+const THEME = "twilight"
+
+var THEMES = map[string]string{
+	"twilight": "Twilight",
+	"clean": "Clean (Pastie)",
+	"slate": "Slate",
+	"vibrant_ink": "Vibrant Ink"
+}
+
 
 func gopaste() *controller.Controller {
 	cont := controller.New();
@@ -33,6 +44,7 @@ func gopaste() *controller.Controller {
 	cont.AddHandler(`/all`, all);
 	cont.AddHandler(`/view/([a-zA-Z0-9:]+)$`, view);
 	cont.AddHandler(`/raw/([a-zA-Z0-9:]+)$`, raw);
+	cont.AddHandler(`/css/([a-z_]+)`, cssFile);
 	cont.AddHandler(`/css`, css);
 	cont.AddHandler(`/jquery`, jQuery);
 	cont.AddHandler(`/js`, js);
@@ -41,18 +53,38 @@ func gopaste() *controller.Controller {
 	return cont;
 }
 
+func curTheme(req *http.Request) (theme string) {
+	theme = THEME;
+
+	// TODO: Fix this to actually match for `themes=([a-z]+)` if needed.
+	if cookie, ok := req.Header["Cookie"]; ok {
+		theme = cookie[6:]
+	}
+
+	return;
+}
+
 func home(c *http.Conn, req *http.Request) {
 	if req.Method == "POST" && len(strings.TrimSpace(req.FormValue("code"))) > 0 {
 		paste := savePaste(req.FormValue("code"), req.FormValue("private") != "");
 		c.SetHeader("Content-type", "text/plain; charset=utf-8");
 		c.Write(strings.Bytes("http://" + DOMAIN + "/view/" + paste + "\n"));
 	} else {
-		homePage.Execute(nil, c)
+		theme := curTheme(req);
+		homePage.Execute(map[string]string{
+			"theme": theme,
+			"theme_select": themeSelect(theme),
+		}, c)
 	}
 }
 
-func view(c *http.Conn, _ *http.Request, id string) {
-	viewPage.Execute(id, c)
+func view(c *http.Conn, req *http.Request, id string) {
+	theme := curTheme(req);
+	viewPage.Execute(map[string]string{
+		"id": id,
+		"theme": theme,
+		"theme_select": themeSelect(theme)
+	}, c)
 }
 
 func raw(c *http.Conn, req *http.Request, id string) {
@@ -115,35 +147,39 @@ func allPaged(c *http.Conn, req *http.Request, page int) {
 
 	codeList := make([]string, len(pastes));
 	results := make(chan int);
-	for i := 0; i < len(pastes); i++ {
-		go func(pos int) {
-			code, err := prettyPaste(pastes[pos], 10);
+	for i, paste := range pastes {
+		go func(i int, paste string) {
+			code, err := prettyPaste(paste, 10);
 			if err != nil {
 				code[0] = err.String()
 			}
 
-			codeList[pos] =
+			codeList[i] =
 				fmt.Sprintf(
 					H2(
 						"Paste ",
 						A("#%s").Attrs(As{
 							"href": "/view/%s",
 						})).Out(),
-					pastes[pos], pastes[pos]) + code[0];
+					paste, paste) + code[0];
 
-			results <- pos;
-		}(i)
+			results <- i;
+		}(i, paste)
 	}
 
 	for i := 0; i < len(pastes); i++ {
 		<-results;
 	}
 
-	allPage.Execute(allEnv{prev, next, codeList}, c);
+	theme := curTheme(req);
+	allPage.Execute(allEnv{prev, next, codeList, theme, themeSelect(theme)}, c);
 }
 
 
 func css(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.css") }
+func cssFile(c *http.Conn, req *http.Request, file string) {
+	http.ServeFile(c, req, "css/" + file + ".css");
+}
 
 func jQuery(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "jquery.js") }
 

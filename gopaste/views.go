@@ -14,6 +14,8 @@ type allEnv struct {
 	prev	string;
 	next	string;
 	pastes	[]string;
+	theme	string;
+	theme_select	string;
 }
 
 var fmap = template.FormatterMap{
@@ -23,6 +25,27 @@ var fmap = template.FormatterMap{
 }
 
 
+func themeSelect(theme string) string {
+	sel := Select().Attrs(As{
+		"name": "theme",
+	});
+
+	for id, name := range THEMES {
+		if id == theme {
+			sel.Append(Option(name).Attrs(As{
+				"value": id,
+				"selected": "selected",
+			}))
+		} else {
+			sel.Append(Option(name).Attrs(As{
+				"value": id,
+			}))
+		}
+	}
+
+	return sel.Out();
+}
+
 func page(title string, contents *Element) string {
 	return "<!DOCTYPE html>" + Html(
 		Head(
@@ -30,6 +53,46 @@ func page(title string, contents *Element) string {
 			Link().Attrs(As{
 				"rel": "stylesheet",
 				"href": "/css",
+				"type": "text/css",
+				"media": "screen",
+				"charset": "utf-8",
+			}),
+			Link().Attrs(As{
+				"rel": "stylesheet",
+				"title": "{theme}",
+				"href": "/css/{theme}",
+				"type": "text/css",
+				"media": "screen",
+				"charset": "utf-8",
+			}),
+			Link().Attrs(As{
+				"rel": "alternate stylesheet",
+				"title": "twilight",
+				"href": "/css/twilight",
+				"type": "text/css",
+				"media": "screen",
+				"charset": "utf-8",
+			}),
+			Link().Attrs(As{
+				"rel": "alternate stylesheet",
+				"title": "clean",
+				"href": "/css/clean",
+				"type": "text/css",
+				"media": "screen",
+				"charset": "utf-8",
+			}),
+			Link().Attrs(As{
+				"rel": "alternate stylesheet",
+				"title": "slate",
+				"href": "/css/slate",
+				"type": "text/css",
+				"media": "screen",
+				"charset": "utf-8",
+			}),
+			Link().Attrs(As{
+				"rel": "alternate stylesheet",
+				"title": "vibrant_ink",
+				"href": "/css/vibrant_ink",
 				"type": "text/css",
 				"media": "screen",
 				"charset": "utf-8",
@@ -44,7 +107,16 @@ func page(title string, contents *Element) string {
 				"type": "text/javascript",
 				"charset": "utf-8",
 			})),
-		Body(contents)).Out()
+		Body(
+			Form(
+				Fieldset(
+					"{theme_select}"
+				)
+			).Attrs(As{
+				"class": "theme-select",
+			}),
+			contents
+		)).Out()
 }
 
 var homePage = template.MustParse(
@@ -53,34 +125,33 @@ var homePage = template.MustParse(
 		Div(
 			Form(
 				Fieldset(
-					P(
-						Textarea("").Attrs(As{
-							"class": "paste-input",
-							"rows": "30",
-							"name": "code",
-						}),
-						Ul(
-							Li(
-								A("All Pastes").Attrs(As{
-									"href": "/all",
-								})),
-							Li(
-								A("Source Code").Attrs(As{
-									"href": "http://github.com/vito/go-play/tree/master/gopaste",
-								})),
-							Li(""),
-							Li("Tab key inserts tabstops."),
-							Li("Seperate content with ---."),
-							Li("Mod+S to submit."),
-							Li(
-								Input().Attrs(As{
-									"type": "checkbox",
-									"class": "paste-private",
-									"name": "private",
-								}),
-								"Private")).Attrs(As{
-							"class": "paste-notes",
-						})),
+					Textarea("").Attrs(As{
+						"class": "paste-input",
+						"rows": "30",
+						"name": "code",
+					}),
+					Ul(
+						Li(
+							A("All Pastes").Attrs(As{
+								"href": "/all",
+							})),
+						Li(
+							A("Source Code").Attrs(As{
+								"href": "http://github.com/vito/go-play/tree/master/gopaste",
+							})),
+						Li(""),
+						Li("Tab key inserts tabstops."),
+						Li("Seperate content with ---."),
+						Li("Mod+S to submit."),
+						Li(
+							Input().Attrs(As{
+								"type": "checkbox",
+								"class": "paste-private",
+								"name": "private",
+							}),
+							"Private")).Attrs(As{
+						"class": "paste-notes",
+					}),
 					Input().Attrs(As{
 						"class": "paste-submit",
 						"type": "submit",
@@ -96,13 +167,13 @@ var homePage = template.MustParse(
 
 var viewPage = template.MustParse(
 	page(
-		"Paste #{@|html} | Go Paste!",
+		"Paste #{id|html} | Go Paste!",
 		Div(
 			A("raw").Attrs(As{
-				"href": "/raw/{@|url+html}",
+				"href": "/raw/{id|url+html}",
 				"class": "raw",
 			}),
-			"{@|code}").Attrs(As{
+			"{id|code}").Attrs(As{
 			"id": "view",
 		})),
 	fmap)
@@ -147,8 +218,8 @@ func codePrinter(w io.Writer, v interface{}, _ string) {
 		io.WriteString(w, `<div class="multi-paste">`);
 	}
 
-	for i := 0; i < len(code); i++ {
-		io.WriteString(w, code[i]);
+	for _, part := range code {
+		io.WriteString(w, part);
 	}
 
 	if len(code) > 1 {

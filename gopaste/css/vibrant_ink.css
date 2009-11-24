@@ -1,0 +1,49 @@
+body {
+    background: #000;
+    color: #FFF;
+}
+
+h2 { background: #040404; }
+
+a { color: #339999; }
+
+
+#home .paste-input { color: #000; background: #fff; }
+#home .paste-notes { color: #666; }
+
+#home .paste-submit,
+.raw,
+.page { color: #fff; background: #101010; }
+
+#home .paste-submit:hover,
+.raw:hover,
+.page:hover { background: #222; }
+
+#home .paste-submit:active,
+.raw:active,
+.page:active { background: #000; }
+
+
+pre.line-numbers { background: #0F0F0F; border-right-color: #0F0F0F; }
+pre.line-numbers a { color: #FFF; }
+
+div.line:target { background: #ffffcc; }
+
+
+.go-basiclit { color: #f00; }
+.go-basiclit.go-int { color: #339999; }
+.go-basiclit.go-float { color: #339999; }
+.go-basiclit.go-char { color: #; }
+.go-basiclit.go-string { color: #66FF00; }
+.go-basiclit.go-raw-string { color: #44B4CC; }
+
+.go-comment { color: #9933CC; }
+
+.go-ident.go-exported { color: #FFCC00; }
+.go-ident.go-local { color: #fff; }
+.go-ident.go-prim-ident { color: #DDE93D; }
+.go-ident.go-func-ident { color: #FFCC00; }
+
+.go-token.go-keyword { color: #FF6600; }
+.go-token.go-operator { color: #fff; }
+
