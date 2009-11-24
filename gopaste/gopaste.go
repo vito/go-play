@@ -71,11 +71,6 @@ func add(c *http.Conn, req *http.Request) {
 
 func all(c *http.Conn, req *http.Request)	{ allPaged(c, req, 1) }
 
-type result struct {
-	position	int;
-	code		string;
-}
-
 func allPaged(c *http.Conn, req *http.Request, page int) {
 	files, ok := io.ReadDir(PATH);
 	sort.Sort(pasteList(files));
@@ -119,28 +114,29 @@ func allPaged(c *http.Conn, req *http.Request, page int) {
 	}
 
 	codeList := make([]string, len(pastes));
-	results := make(chan result);
+	results := make(chan int);
 	for i := 0; i < len(pastes); i++ {
 		go func(pos int) {
 			code, err := prettyPaste(pastes[pos], 10);
 			if err != nil {
-				code = err.String()
+				code[0] = err.String()
 			}
 
-			results <- result{pos, code};
+			codeList[pos] =
+				fmt.Sprintf(
+					H2(
+						"Paste ",
+						A("#%s").Attrs(As{
+							"href": "/view/%s",
+						})).Out(),
+					pastes[pos], pastes[pos]) + code[0];
+
+			results <- pos;
 		}(i)
 	}
 
 	for i := 0; i < len(pastes); i++ {
-		res := <-results;
-		codeList[res.position] =
-			fmt.Sprintf(
-				H2(
-					"Paste ",
-					A("#%s").Attrs(As{
-						"href": "/view/%s",
-					})).Out(),
-				pastes[res.position], pastes[res.position]) + res.code;
+		<-results;
 	}
 
 	allPage.Execute(allEnv{prev, next, codeList}, c);

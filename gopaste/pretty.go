@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/vector";
 	"fmt";
 	"go/ast";
 	"go/token";
@@ -23,11 +24,11 @@ type HTMLStyler struct {
 }
 
 type collector struct {
-	contents string;
+	contents *vector.StringVector;
 }
 
 func (self *collector) Write(p []byte) (n int, err os.Error) {
-	self.contents += string(p);
+	self.contents.Push(string(p));
 	return len(p), nil;
 }
 
@@ -120,36 +121,41 @@ func Print(filename string, source interface{}) (pretty string, ok os.Error) {
 	}
 
 	coll := new(collector);
+	coll.contents = vector.NewStringVector(0);
+
 	(&printer.Config{
 		Mode: 5,
 		Tabwidth: 4,
 		Styler: new(HTMLStyler),
 	}).Fprint(coll, fileAst);
 
-	pretty = coll.contents;
+	pretty = strings.Join(coll.contents.Data(), "");
 
 	return;
 }
 
-func prettyPaste(id string, limit int) (code string, err os.Error) {
+func prettyPaste(id string, limit int) (code []string, err os.Error) {
 	source, err := io.ReadFile("pastes" + path.Clean("/"+id));
 	if err != nil {
 		return
 	}
 
-	multi := strings.Split(string(source), "---", 0);
+	multi := strings.Split(string(source), "\n---", 0);
+
+	allCode := make([]string, len(multi));
+	results := make(chan int);
+	for i := 0; i < len(multi); i++ {
+		go func(i int) {
+			allCode[i], _ = prettySource(id, multi[i], limit);
+			results <- i
+		}(i);
+	}
 
 	for i := 0; i < len(multi); i++ {
-		multi[i], err = prettySource(id, multi[i], limit)
+		<-results;
 	}
 
-	code = strings.Join(multi, "\n\n");
-
-	if len(multi) > 1 {
-		code = Div(code).Attrs(As{
-			"class": "multi-paste",
-		}).Out()
-	}
+	code = allCode;
 
 	return;
 }

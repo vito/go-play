@@ -143,5 +143,15 @@ func urlHtmlFormatter(w io.Writer, v interface{}, _ string) {
 func codePrinter(w io.Writer, v interface{}, _ string) {
 	code, _ := prettyPaste(v.(string), 0);
 
-	io.WriteString(w, code);
+	if len(code) > 1 {
+		io.WriteString(w, `<div class="multi-paste">`);
+	}
+
+	for i := 0; i < len(code); i++ {
+		io.WriteString(w, code[i]);
+	}
+
+	if len(code) > 1 {
+		io.WriteString(w, `</div>`);
+	}
 }
