@@ -146,7 +146,7 @@ func Print(filename string, source interface{}) (pretty string, ok os.Error) {
 	}
 
 	coll := new(collector);
-	coll.contents = vector.NewStringVector(0);
+	coll.contents = new(vector.StringVector);
 
 	(&printer.Config{
 		Mode: 5,

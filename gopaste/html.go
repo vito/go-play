@@ -63,7 +63,7 @@ func (self *Element) Attrs(attrs As) *Element {
 func New(name string, content ...) *Element {
 	ele := new(Element);
 	ele.name = name;
-	ele.contents = vector.NewStringVector(0);
+	ele.contents = new(vector.StringVector);
 	ele.attributes = nil;
 
 	ele.Append(content);

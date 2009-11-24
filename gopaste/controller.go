@@ -22,7 +22,7 @@ type Controller struct {
 
 func New() *Controller {
 	cont := new(Controller);
-	cont.callbacks = vector.New(0);
+	cont.callbacks = new(vector.Vector);
 	return cont;
 }
 
