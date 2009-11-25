@@ -32,7 +32,9 @@ $(function(){
     $(".theme-select select").change(function(){
         setActiveStyleSheet($(this).val());
 
-        document.cookie = "theme=" + $(this).val() + "; path=/";
+        var date = new Date();
+        date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
+        document.cookie = "theme=" + $(this).val() + "; path=/; expires=" + date.toGMTString();
     });
 });
 
