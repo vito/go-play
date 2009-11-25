@@ -21,7 +21,7 @@ func main() {
 
 	flag.Parse();
 
-	http.Handle("/", http.HandlerFunc(cont.Handler()));
+	http.Handle("/", cont.HandlerFunc());
 
 	err := http.ListenAndServe(*addr, nil);
 	if err != nil {
