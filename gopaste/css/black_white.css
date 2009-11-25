@@ -1,0 +1,50 @@
+body {
+    background: #fff;
+    color: #000;
+}
+
+h2 { background: #f9f9f9; }
+
+a { color: #000; font-weight: bold; text-decoration: underline; }
+a:hover { color: #555; }
+
+
+#home .paste-input { color: #000; background: #f0f0f0; }
+#home .paste-notes { color: #666; }
+
+#home .paste-submit,
+.raw,
+.page { color: #D20; background: #fff0f0; }
+
+#home .paste-submit:hover,
+.raw:hover,
+.page:hover { background: #D20; color: #fff }
+
+#home .paste-submit:active,
+.raw:active,
+.page:active { background: #000; }
+
+
+pre.line-numbers { background: #f0f0f0; border-right-color: #f0f0f0; }
+pre.line-numbers a { color: #000; }
+
+div.line:target { background: #ffffcc; }
+
+
+.go-basiclit { color: #000; }
+.go-basiclit.go-int { color: #000; font-weight: bold; }
+.go-basiclit.go-float { color: #000; font-weight: bold; }
+.go-basiclit.go-char { color: #000; }
+.go-basiclit.go-string { color: #000; }
+.go-basiclit.go-raw-string { color: #000; }
+
+.go-comment { color: #333; }
+
+.go-ident.go-exported { color: #000; font-weight: bold; }
+.go-ident.go-local { color: #000; }
+.go-ident.go-prim-ident { color: #000; }
+.go-ident.go-func-ident { color: #000; font-weight: bold; }
+
+.go-token.go-keyword { color: #000; font-weight: bold; }
+.go-token.go-operator { color: #000; font-weight: normal; }
+

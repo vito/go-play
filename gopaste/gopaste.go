@@ -33,7 +33,9 @@ var THEMES = map[string]string{
 	"twilight": "Twilight",
 	"clean": "Clean (Pastie)",
 	"slate": "Slate",
-	"vibrant_ink": "Vibrant Ink"
+	"vibrant_ink": "Vibrant Ink",
+	"white_black": "White on Black",
+	"black_white": "Black on White",
 }
 
 
