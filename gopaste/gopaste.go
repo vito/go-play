@@ -6,6 +6,7 @@ import (
 	"io";
 	"os";
 	"rand";
+	"regexp";
 	"sort";
 	"strconv";
 	"strings";
@@ -57,9 +58,9 @@ func gopaste() *controller.Controller {
 func curTheme(req *http.Request) (theme string) {
 	theme = THEME;
 
-	// TODO: Fix this to actually match for `themes=([a-z]+)` if needed.
 	if cookie, ok := req.Header["Cookie"]; ok {
-		theme = cookie[6:]
+		match := regexp.MustCompile(`theme=([a-z_]+)`).MatchStrings(cookie);
+		theme = match[1];
 	}
 
 	return;
