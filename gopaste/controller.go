@@ -41,8 +41,8 @@ func (self *Controller) HandlerFunc() http.HandlerFunc {
 }
 
 func (self *Controller) Handle(c *http.Conn, req *http.Request) {
-	for i := 0; i < self.callbacks.Len(); i++ {
-		callback := self.callbacks.At(i).(*callback);
+	for _, d := range self.callbacks.Data() {
+		callback := d.(*callback);
 
 		match := `^` + callback.match;
 

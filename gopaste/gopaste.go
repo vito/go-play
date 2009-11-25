@@ -24,9 +24,10 @@ const PATH = "pastes/"
 // Pastes per page at /all
 const PER_PAGE = 15
 
-// Default theme for pastes (and the site)
+// Default theme
 const THEME = "twilight"
 
+// All themes available
 var THEMES = map[string]string{
 	"twilight": "Twilight",
 	"clean": "Clean (Pastie)",

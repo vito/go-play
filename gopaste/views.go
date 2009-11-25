@@ -47,66 +47,47 @@ func themeSelect(theme string) string {
 }
 
 func page(title string, contents *Element) string {
+	head := Head(
+		Title(title),
+		Link().Attrs(As{
+			"rel": "stylesheet",
+			"href": "/css",
+			"type": "text/css",
+			"media": "screen",
+			"charset": "utf-8",
+		}),
+		Link().Attrs(As{
+			"rel": "stylesheet",
+			"title": "{theme}",
+			"href": "/css/{theme}",
+			"type": "text/css",
+			"media": "screen",
+			"charset": "utf-8",
+		}),
+		Script("").Attrs(As{
+			"src": "/jquery",
+			"type": "text/javascript",
+			"charset": "utf-8",
+		}),
+		Script("").Attrs(As{
+			"src": "/js",
+			"type": "text/javascript",
+			"charset": "utf-8",
+		}));
+
+	for id, _ := range THEMES {
+		head.Append(Link().Attrs(As{
+			"rel": "alternate stylesheet",
+			"title": id,
+			"href": "/css/" + id,
+			"type": "text/css",
+			"media": "screen",
+			"charset": "utf-8",
+		}))
+	}
+
 	return "<!DOCTYPE html>" + Html(
-		Head(
-			Title(title),
-			Link().Attrs(As{
-				"rel": "stylesheet",
-				"href": "/css",
-				"type": "text/css",
-				"media": "screen",
-				"charset": "utf-8",
-			}),
-			Link().Attrs(As{
-				"rel": "stylesheet",
-				"title": "{theme}",
-				"href": "/css/{theme}",
-				"type": "text/css",
-				"media": "screen",
-				"charset": "utf-8",
-			}),
-			Link().Attrs(As{
-				"rel": "alternate stylesheet",
-				"title": "twilight",
-				"href": "/css/twilight",
-				"type": "text/css",
-				"media": "screen",
-				"charset": "utf-8",
-			}),
-			Link().Attrs(As{
-				"rel": "alternate stylesheet",
-				"title": "clean",
-				"href": "/css/clean",
-				"type": "text/css",
-				"media": "screen",
-				"charset": "utf-8",
-			}),
-			Link().Attrs(As{
-				"rel": "alternate stylesheet",
-				"title": "slate",
-				"href": "/css/slate",
-				"type": "text/css",
-				"media": "screen",
-				"charset": "utf-8",
-			}),
-			Link().Attrs(As{
-				"rel": "alternate stylesheet",
-				"title": "vibrant_ink",
-				"href": "/css/vibrant_ink",
-				"type": "text/css",
-				"media": "screen",
-				"charset": "utf-8",
-			}),
-			Script("").Attrs(As{
-				"src": "/jquery",
-				"type": "text/javascript",
-				"charset": "utf-8",
-			}),
-			Script("").Attrs(As{
-				"src": "/js",
-				"type": "text/javascript",
-				"charset": "utf-8",
-			})),
+		head,
 		Body(
 			Form(
 				Fieldset(
