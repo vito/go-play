@@ -20,7 +20,6 @@ type Server interface {
 func Start(srv Server, arg Value) <-chan Value {
 	r := make(chan Value);
 	go srv.Init(r, arg);
-
 	return r;
 }
 

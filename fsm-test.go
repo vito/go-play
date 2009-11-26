@@ -24,11 +24,11 @@ const (
 )
 
 
-func (self *TestFSM) Init(inst *fsm.Instance, msg *fsm.Message) {
+func (self *TestFSM) Init(s chan<- fsm.StateHandler, inst *fsm.Instance, msg *fsm.Message) {
 	self.real = msg.Data[0].(int);
 	self.imaginary = msg.Data[1].(int);
 
-	inst.Respond(fsm.M(OK, Real));	// Set initial state to Real
+	s <- Real;
 }
 
 func (self *TestFSM) HandleEvent(inst *fsm.Instance, msg *fsm.Message) {
@@ -41,13 +41,13 @@ func (self *TestFSM) HandleEvent(inst *fsm.Instance, msg *fsm.Message) {
 	}
 }
 
-func (self *TestFSM) HandleSyncEvent(inst *fsm.Instance, msg *fsm.Message) {
+func (self *TestFSM) HandleSyncEvent(r chan<- *fsm.Message, inst *fsm.Instance, msg *fsm.Message) {
 	switch msg.What {
 	case GET_STATE:
-		inst.Respond(fsm.M(OK, self.real, self.imaginary))
+		r <- fsm.M(OK, self.real, self.imaginary)
 	default:
 		fmt.Printf("Got unknown sync event: %#v\n", msg);
-		inst.Respond(fsm.M(ERROR, "Unknown sync event."));
+		r <- fsm.M(ERROR, "Unknown sync event.");
 	}
 }
 
@@ -61,10 +61,10 @@ func Real(srv fsm.Server, inst *fsm.Instance, msg *fsm.Message) {
 		fmt.Printf("REAL: Decreasing.\n");
 		self.real--;
 	case ADD:
-		fmt.Printf("REAL: Adding.\n");
+		fmt.Printf("REAL: Adding %#v.\n", msg.Data[0]);
 		self.real += msg.Data[0].(int);
 	case SUBTRACT:
-		fmt.Printf("REAL: Subtracting.\n");
+		fmt.Printf("REAL: Subtracting %#v.\n", msg.Data[0]);
 		self.real -= msg.Data[0].(int);
 	}
 }
@@ -79,10 +79,10 @@ func Imaginary(srv fsm.Server, inst *fsm.Instance, msg *fsm.Message) {
 		fmt.Printf("IMAGINARY: Decreasing.\n");
 		self.imaginary--;
 	case ADD:
-		fmt.Printf("IMAGINARY: Adding.\n");
+		fmt.Printf("IMAGINARY: Adding %#v.\n", msg.Data[0]);
 		self.imaginary += msg.Data[0].(int);
 	case SUBTRACT:
-		fmt.Printf("IMAGINARY: Subtracting.\n");
+		fmt.Printf("IMAGINARY: Subtracting %#v.\n", msg.Data[0]);
 		self.imaginary -= msg.Data[0].(int);
 	}
 }
@@ -106,9 +106,9 @@ func main() {
 
 	time.Sleep(100);	// Slight delay to let all those finish, just for the sake of this demo.
 
-	fmt.Printf("Current state: %#v\n", inst.SendSyncEvent(fsm.M(GET_STATE)));
+	fmt.Printf("Current state: %#v\n", <-inst.SendSyncEvent(fsm.M(GET_STATE)));
 
 	inst.SendAllEvent(fsm.M(RESET));
 
-	fmt.Printf("Current state: %#v\n", inst.SendSyncEvent(fsm.M(GET_STATE)));
+	fmt.Printf("Current state: %#v\n", <-inst.SendSyncEvent(fsm.M(GET_STATE)));
 }

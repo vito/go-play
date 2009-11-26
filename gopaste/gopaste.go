@@ -16,7 +16,7 @@ import (
 )
 
 
-// Used for building a URL response for POST requests to /
+// Domain gopaste is running on.
 const DOMAIN = "gopaste.org"
 
 // Location for pastes
@@ -78,7 +78,8 @@ func home(c *http.Conn, req *http.Request) {
 		homePage.Execute(map[string]string{
 			"theme": theme,
 			"theme_select": themeSelect(theme),
-		}, c)
+		},
+			c);
 	}
 }
 
@@ -87,8 +88,9 @@ func view(c *http.Conn, req *http.Request, id string) {
 	viewPage.Execute(map[string]string{
 		"id": id,
 		"theme": theme,
-		"theme_select": themeSelect(theme)
-	}, c)
+		"theme_select": themeSelect(theme),
+	},
+		c);
 }
 
 func raw(c *http.Conn, req *http.Request, id string) {
@@ -172,7 +174,7 @@ func allPaged(c *http.Conn, req *http.Request, page int) {
 	}
 
 	for i := 0; i < len(pastes); i++ {
-		<-results;
+		<-results
 	}
 
 	theme := curTheme(req);
@@ -182,7 +184,7 @@ func allPaged(c *http.Conn, req *http.Request, page int) {
 
 func css(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "paste.css") }
 func cssFile(c *http.Conn, req *http.Request, file string) {
-	http.ServeFile(c, req, "css/" + file + ".css");
+	http.ServeFile(c, req, "css/"+file+".css")
 }
 
 func jQuery(c *http.Conn, req *http.Request)	{ http.ServeFile(c, req, "jquery.js") }

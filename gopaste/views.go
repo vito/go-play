@@ -11,10 +11,10 @@ import (
 
 
 type allEnv struct {
-	prev	string;
-	next	string;
-	pastes	[]string;
-	theme	string;
+	prev		string;
+	next		string;
+	pastes		[]string;
+	theme		string;
 	theme_select	string;
 }
 
@@ -91,13 +91,10 @@ func page(title string, contents *Element) string {
 		Body(
 			Form(
 				Fieldset(
-					"{theme_select}"
-				)
-			).Attrs(As{
+					"{theme_select}")).Attrs(As{
 				"class": "theme-select",
 			}),
-			contents
-		)).Out()
+			contents)).Out();
 }
 
 var homePage = template.MustParse(
@@ -196,14 +193,14 @@ func codePrinter(w io.Writer, v interface{}, _ string) {
 	code, _ := prettyPaste(v.(string), 0);
 
 	if len(code) > 1 {
-		io.WriteString(w, `<div class="multi-paste">`);
+		io.WriteString(w, `<div class="multi-paste">`)
 	}
 
 	for _, part := range code {
-		io.WriteString(w, part);
+		io.WriteString(w, part)
 	}
 
 	if len(code) > 1 {
-		io.WriteString(w, `</div>`);
+		io.WriteString(w, `</div>`)
 	}
 }

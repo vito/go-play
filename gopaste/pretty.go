@@ -21,7 +21,7 @@ type HTMLStyler struct {
 	comment		*ast.Comment;
 	comment_text	[]string;
 	comment_offset	int;
-	prev	interface {}
+	prev		interface{};
 }
 
 type collector struct {
@@ -42,7 +42,7 @@ func (self *HTMLStyler) Comment(comment *ast.Comment, line []byte) ([]byte, prin
 	if self.comment == comment {
 		self.comment_offset++;
 		if self.comment_text[self.comment_offset] == "" {
-			self.comment_offset++;
+			self.comment_offset++
 		}
 	} else {
 		self.comment = comment;
@@ -72,7 +72,7 @@ func (self *HTMLStyler) BasicLit(x *ast.BasicLit) ([]byte, printer.HTMLTag) {
 	}
 
 	if x.Value[0] == '`' {
-		kind = "string go-raw-string";
+		kind = "string go-raw-string"
 	}
 
 	self.prev = x;
@@ -91,10 +91,10 @@ func (self *HTMLStyler) Ident(id *ast.Ident) ([]byte, printer.HTMLTag) {
 
 	switch id.String() {
 	case "bool", "uint8", "uint16", "uint32", "uint64", "int8", "int16", "int32", "int64", "float32", "float64", "byte", "uint", "int", "float", "uintptr", "string":
-		classes += " go-prim-ident";
+		classes += " go-prim-ident"
 	default:
 		if tok, ok := self.prev.(token.Token); ok && tok.String() == "func" || tok.String() == ")" {
-			classes += " go-func-ident";
+			classes += " go-func-ident"
 		}
 	}
 
@@ -172,12 +172,12 @@ func prettyPaste(id string, limit int) (code []string, err os.Error) {
 	for i := 0; i < len(multi); i++ {
 		go func(i int) {
 			allCode[i], _ = prettySource(id, multi[i], limit);
-			results <- i
-		}(i);
+			results <- i;
+		}(i)
 	}
 
 	for i := 0; i < len(multi); i++ {
-		<-results;
+		<-results
 	}
 
 	code = allCode;

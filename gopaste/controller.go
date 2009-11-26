@@ -35,9 +35,7 @@ func (self *Controller) AddHandler(regexp string, fun interface{}) {
 }
 
 func (self *Controller) HandlerFunc() http.HandlerFunc {
-	return http.HandlerFunc(func(c *http.Conn, req *http.Request) {
-		self.Handle(c, req)
-	})
+	return http.HandlerFunc(func(c *http.Conn, req *http.Request) { self.Handle(c, req) })
 }
 
 func (self *Controller) Handle(c *http.Conn, req *http.Request) {
