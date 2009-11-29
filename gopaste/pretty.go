@@ -221,8 +221,9 @@ func prettySource(filename string, source string, limit int) (code string, err o
 		linesPre.Append("\n");
 		codePre.Append(
 			Div(
-				A("\n...").Attrs(As{
-					"href": "/{@|url+html}",
+                "\n",
+				A("...").Attrs(As{
+					"href": fmt.Sprintf("/view/%s", filename),
 					"class": "go-comment",
 				})).Attrs(As{
 				"class": "line",
