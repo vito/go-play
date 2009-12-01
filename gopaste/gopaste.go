@@ -36,6 +36,8 @@ var THEMES = map[string]string{
 	"vibrant_ink": "Vibrant Ink",
 	"white_black": "White on Black",
 	"black_white": "Black on White",
+	"lights_on": "Lights On",
+	"lights_off": "Lights Off",
 }
 
 
