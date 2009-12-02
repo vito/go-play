@@ -12,6 +12,7 @@ import (
 	"path";
 	"regexp";
 	"strings";
+	"template";
 
 	. "./html";
 )
@@ -188,7 +189,10 @@ func prettyPaste(id string, limit int) (code []string, err os.Error) {
 func prettySource(filename string, source string, limit int) (code string, err os.Error) {
 	prettyCode, ok := Print(filename, source);
 	if ok != nil {	// If it fails to parse, just serve it raw.
-		prettyCode = source
+		coll := new(collector);
+		coll.contents = new(vector.StringVector);
+		template.HTMLEscape(coll, strings.Bytes(source));
+		prettyCode = strings.Join(coll.contents.Data(), "");
 	}
 
 	linesPre := Pre().Attrs(As{"class": "line-numbers"});
