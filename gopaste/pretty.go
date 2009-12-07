@@ -1,7 +1,7 @@
 package main
 
 import (
-	"container/vector";
+	"bytes";
 	"fmt";
 	"go/ast";
 	"go/token";
@@ -22,15 +22,6 @@ type HTMLStyler struct {
 	comment_text	[]string;
 	comment_offset	int;
 	prev		interface{};
-}
-
-type collector struct {
-	contents *vector.StringVector;
-}
-
-func (self *collector) Write(p []byte) (n int, err os.Error) {
-	self.contents.Push(string(p));
-	return len(p), nil;
 }
 
 
@@ -142,8 +133,7 @@ func Print(filename string, source interface{}) (pretty string, ok os.Error) {
 		}
 	}
 
-	coll := new(collector);
-	coll.contents = new(vector.StringVector);
+	coll := new(bytes.Buffer);
 
 	goprint := func(node interface{}) {
 		(&printer.Config{
@@ -159,16 +149,16 @@ func Print(filename string, source interface{}) (pretty string, ok os.Error) {
 	case []ast.Decl:
 		for _, decl := range node.([]ast.Decl) {
 			goprint(decl);
-			coll.contents.Push("\n\n");
+			coll.WriteString("\n\n");
 		}
 	case []ast.Stmt:
 		for _, stmt := range node.([]ast.Stmt) {
 			goprint(stmt);
-			coll.contents.Push("\n\n");
+			coll.WriteString("\n\n");
 		}
 	}
 
-	pretty = strings.Join(coll.contents.Data(), "");
+	pretty = coll.String();
 
 	return;
 }
@@ -202,10 +192,9 @@ func prettyPaste(id string, limit int) (code []string, err os.Error) {
 func prettySource(filename string, source string, limit int) (code string, err os.Error) {
 	prettyCode, ok := Print(filename, source);
 	if ok != nil {	// If it fails to parse, just serve it raw.
-		coll := new(collector);
-		coll.contents = new(vector.StringVector);
+		coll := new(bytes.Buffer);
 		template.HTMLEscape(coll, strings.Bytes(source));
-		prettyCode = strings.Join(coll.contents.Data(), "");
+		prettyCode = coll.String();
 	}
 
 	linesPre := Pre().Attrs(As{"class": "line-numbers"});
