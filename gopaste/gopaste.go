@@ -3,7 +3,7 @@ package main
 import (
 	"fmt";
 	"http";
-	"io";
+	"io/ioutil";
 	"os";
 	"rand";
 	"regexp";
@@ -112,7 +112,7 @@ func add(c *http.Conn, req *http.Request) {
 func all(c *http.Conn, req *http.Request)	{ allPaged(c, req, 1) }
 
 func allPaged(c *http.Conn, req *http.Request, page int) {
-	files, ok := io.ReadDir(PATH);
+	files, ok := ioutil.ReadDir(PATH);
 	sort.Sort(pasteList(files));
 
 	if ok != nil {
@@ -211,7 +211,7 @@ func savePaste(source string, private bool) string {
 		paste = newName("")
 	}
 
-	io.WriteFile(PATH+paste, strings.Bytes(source), 0644);
+	ioutil.WriteFile(PATH+paste, strings.Bytes(source), 0644);
 
 	return paste;
 }

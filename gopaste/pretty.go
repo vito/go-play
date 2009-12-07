@@ -7,10 +7,9 @@ import (
 	"go/token";
 	"go/parser";
 	"go/printer";
-	"io";
+	"io/ioutil";
 	"os";
 	"path";
-	"regexp";
 	"strings";
 	"template";
 
@@ -131,29 +130,43 @@ func (self *HTMLStyler) Token(tok token.Token) ([]byte, printer.HTMLTag) {
 }
 
 func Print(filename string, source interface{}) (pretty string, ok os.Error) {
-	fileAst, ok := parser.ParseFile(filename, source, 4);
+	var node interface{};
 
-	// Make common corrections for snippet pastes
-	if ok != nil && source != nil {
-		src := source.(string);
+	node, ok = parser.ParseFile(filename, source, 4);
 
-		if m, _ := regexp.MatchString(`^package`, src); !m {
-			src = "package main\n\n" + src
-		}
-
-		if fileAst, ok = parser.ParseFile(filename, src, 4); ok != nil {
-			return
+	if ok != nil {
+		if node, ok = parser.ParseDeclList(filename, source); ok != nil {
+			if node, ok = parser.ParseStmtList(filename, source); ok != nil {
+				return
+			}
 		}
 	}
 
 	coll := new(collector);
 	coll.contents = new(vector.StringVector);
 
-	(&printer.Config{
-		Mode: 5,
-		Tabwidth: 4,
-		Styler: new(HTMLStyler),
-	}).Fprint(coll, fileAst);
+	goprint := func(node interface{}) {
+		(&printer.Config{
+			Mode: 5,
+			Tabwidth: 4,
+			Styler: new(HTMLStyler),
+		}).Fprint(coll, node);
+	};
+
+	switch node.(type) {
+	case *ast.File:
+		goprint(node);
+	case []ast.Decl:
+		for _, decl := range node.([]ast.Decl) {
+			goprint(decl);
+			coll.contents.Push("\n\n");
+		}
+	case []ast.Stmt:
+		for _, stmt := range node.([]ast.Stmt) {
+			goprint(stmt);
+			coll.contents.Push("\n\n");
+		}
+	}
 
 	pretty = strings.Join(coll.contents.Data(), "");
 
@@ -161,7 +174,7 @@ func Print(filename string, source interface{}) (pretty string, ok os.Error) {
 }
 
 func prettyPaste(id string, limit int) (code []string, err os.Error) {
-	source, err := io.ReadFile("pastes" + path.Clean("/"+id));
+	source, err := ioutil.ReadFile("pastes" + path.Clean("/"+id));
 	if err != nil {
 		return
 	}
