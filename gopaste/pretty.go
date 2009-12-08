@@ -137,7 +137,7 @@ func Print(filename string, source interface{}) (pretty string, ok os.Error) {
 
 	goprint := func(node interface{}) {
 		(&printer.Config{
-			Mode: 5,
+			Mode: 9,
 			Tabwidth: 4,
 			Styler: new(HTMLStyler),
 		}).Fprint(coll, node);
