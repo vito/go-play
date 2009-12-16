@@ -121,7 +121,7 @@ func (self *HTMLStyler) Token(tok token.Token) ([]byte, printer.HTMLTag) {
 }
 
 func Print(filename string, source interface{}) (pretty string, ok os.Error) {
-	var node interface{};
+	var node interface{}
 
 	node, ok = parser.ParseFile(filename, source, 4);
 
@@ -140,12 +140,12 @@ func Print(filename string, source interface{}) (pretty string, ok os.Error) {
 			Mode: 9,
 			Tabwidth: 4,
 			Styler: new(HTMLStyler),
-		}).Fprint(coll, node);
+		}).Fprint(coll, node)
 	};
 
 	switch node.(type) {
 	case *ast.File:
-		goprint(node);
+		goprint(node)
 	case []ast.Decl:
 		for _, decl := range node.([]ast.Decl) {
 			goprint(decl);
@@ -227,7 +227,7 @@ func prettySource(filename string, source string, limit int) (code string, err o
 		linesPre.Append("\n");
 		codePre.Append(
 			Div(
-                "\n",
+				"\n",
 				A("...").Attrs(As{
 					"href": fmt.Sprintf("/view/%s", filename),
 					"class": "go-comment",

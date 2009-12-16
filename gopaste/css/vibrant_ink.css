@@ -12,15 +12,15 @@ a { color: #339999; }
 #home .paste-notes { color: #666; }
 
 #home .paste-submit,
-.raw,
+.view-links a,
 .page { color: #fff; background: #101010; }
 
 #home .paste-submit:hover,
-.raw:hover,
+.view-links a:hover,
 .page:hover { background: #222; }
 
 #home .paste-submit:active,
-.raw:active,
+.view-links a:active,
 .page:active { background: #000; }
 
 

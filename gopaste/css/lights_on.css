@@ -13,15 +13,15 @@ a:hover { color: #555; }
 #home .paste-notes { color: #666; }
 
 #home .paste-submit,
-.raw,
+.view-links a,
 .page { color: #D20; background: #fff0f0; }
 
 #home .paste-submit:hover,
-.raw:hover,
+.view-links a:hover,
 .page:hover { background: #D20; color: #fff }
 
 #home .paste-submit:active,
-.raw:active,
+.view-links a:active,
 .page:active { background: #000; }
 
 

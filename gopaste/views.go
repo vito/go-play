@@ -147,9 +147,17 @@ var viewPage = template.MustParse(
 	page(
 		"Paste #{id|html} | Go Paste!",
 		Div(
-			A("raw").Attrs(As{
-				"href": "/raw/{id|url+html}",
-				"class": "raw",
+			Ul(
+				Li(
+					A("raw").Attrs(As{
+						"href": "/raw/{id|url+html}",
+						"class": "raw",
+					})),
+				Li(
+					A("home").Attrs(As{
+						"href": "/",
+					}))).Attrs(As{
+				"class": "view-links",
 			}),
 			"{id|code}").Attrs(As{
 			"id": "view",

@@ -12,17 +12,17 @@ pre.line-numbers a { color: #444; }
 
 div.line:target { background: #222; }
 
-.raw,
+.view-links a,
 .page { background: #111; }
 
 #home .paste-input { color: #fff; background: #0a0a0a; }
 #home .paste-submit { color: #fff; background: #101010; }
 #home .paste-notes { color: #666; }
 #home .paste-submit:hover,
-.raw:hover,
+.view-links a:hover,
 .page:hover { background: #222; }
 #home .paste-submit:active,
-.raw:active,
+.view-links a:active,
 .page:active { background: #000; }
 
 .go-basiclit { color: #CF6A4C; }

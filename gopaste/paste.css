@@ -99,12 +99,16 @@ a.prev-page {
     margin-right: 1em;
 }
 
-.raw {
+.view-links {
     float: right;
     position: absolute;
     top: 1em;
     right: 1em;
+}
+.view-links a {
+	margin-bottom: 1em;
     padding: .5em .75em .6em;
+	float: right;
     text-decoration: none;
 }
 
